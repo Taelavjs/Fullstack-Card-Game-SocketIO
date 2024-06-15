@@ -1,0 +1,131 @@
+class Player {
+    constructor(socketID, username, roleName, sessionID) {
+        this.socketID = socketID;
+        this.username = username;
+        this.roleName = roleName;
+        this.deck = [];
+        this.readyStatus = false;
+        this.selectedCard = null;
+        this.noCardsRemaining = false;
+        this.sessionID = sessionID
+    }
+
+    matchStart() {
+        let io = require('../socket').getio();
+
+        io.to(this.socketID).emit("startMatch");
+        console.log("emitted start match");
+    }
+
+    setDeck(deck) {
+        this.deck = deck;
+    }
+
+    getSocket() {
+        let io = require('../socket').getio();
+
+        return io.to(this.socketID);
+    }
+
+    gameStart = () => {
+        let io = require('../socket').getio();
+        this.sendDeck();
+
+    }
+
+
+    async chosenCardListener() {
+        return new Promise((resolve, reject) => {
+            if (this.selectedCard !== null) {
+                resolve(this.selectedCard);
+                return;
+            }
+
+            let io = require('../socket').getio();
+            io.sockets.sockets.get(this.socketID).once("disconnect", (reason) => {
+                console.log("disconnected while waiting for card choice");
+                reject("card not exist");
+            });
+
+            io.sockets.sockets.get(this.socketID).once("chosen-card", (arg) => {
+
+                let foundCard = this.checkCardExists(arg);
+                if (typeof foundCard === 'object') {
+                    console.log("Card selected: ", foundCard);
+                    resolve(foundCard);
+                } else {
+                    console.log(foundCard);
+                    reject(new Error(foundCard));
+                }
+            });
+        });
+    }
+
+    checkCardExists(cardID) {
+        if(this.selectedCard) { return this.selectedCard;}
+        console.log("///////////////////////////////")
+        console.log(this.deck);
+        console.log(this.selectedCard);
+        console.log("///////////////////////////////")
+
+        for (let index = 0; index < this.deck.length; index++) {
+            const card = this.deck[index];
+
+            if (card.id === parseInt(cardID)) {
+                this.selectedCard = card;
+                this.deck.splice(index, 1);
+                return card;
+            }
+        }
+        return "card not exist";
+    }
+
+    resetChosenCard() {
+        console.log("RESETTING!");
+        this.selectedCard = null;
+        this.sendDeck();
+    }
+
+    sendDeck() {
+        let io = require('../socket').getio();
+        var array2;
+        if (this.deck.length > 1) {
+            array2 = [0, 1];
+
+        } else if (this.deck.length == 0) {
+            this.noCardsRemaining = true;
+            return;
+        } else {
+            array2 = [0, 0]
+        }
+        var deckToGivePlayer = array2.map(i => this.deck[i]);
+        io.to(this.socketID).emit("deck-update", deckToGivePlayer);
+    }
+
+    setReadyStatus(status) {
+        this.readyStatus = status;
+    }
+
+    getReadyStatus() {
+        return this.readyStatus;
+    }
+
+    addCardToDeck(cards) {
+        cards.forEach(card => {
+            this.deck.push(card);
+        });
+    }
+
+    newSocketID(newSocketID) {
+        this.socketID = newSocketID;
+    }
+
+    sendWinnerToPLayer(winner) {
+        this.getSocket().emit("winner-decided", winner);
+
+    }
+
+
+}
+
+module.exports = Player;
