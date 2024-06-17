@@ -85,6 +85,8 @@ const UsernameComponent = () => {
           hostName: hostUsn,
           oppName: opponentUsn,
         });
+      } else {
+        setErrorText("Error Occured");
       }
     })
   }
