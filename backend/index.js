@@ -26,6 +26,9 @@ const {
   joinRoom
 } = require('./listeners/joinRoom.js');
 const {
+  listLobbys
+} = require('./listeners/listLobbys.js');
+const {
   onConnection
 } = require('./listeners/onConnection.js');
 
@@ -84,6 +87,8 @@ let middleware;
             opponent: playerGame.opponent ? playerGame.opponent.username : null,
           })
 
+
+
           if (playerGame.state == "PLAYING") {
             console.log(socket.username);
             if (socket.username == playerGame.host.username) {
@@ -107,6 +112,7 @@ let middleware;
       createRoom(socket, io, sessionStore);
       disconnect(socket, io);
       joinRoom(io, socket, sessionStore);
+      listLobbys(socket);
       // LISTENERS ======================
     });
 

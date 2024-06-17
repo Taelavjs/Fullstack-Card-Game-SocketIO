@@ -2,6 +2,7 @@ import './../App.css';
 import { useEffect, useState } from 'react';
 import socket from '../socket';
 import Card from './card';
+import LobbySelector from './lobbySelector';
 import { createContext, useContext } from "react";
 import { UserContext } from '../App';
 
@@ -75,6 +76,19 @@ const UsernameComponent = () => {
     })
   }
 
+  const joinLobbys = (roomName) => {
+    setShowLobbyStatus(false);
+    socket.emit("join-room", roomName, (values) => {
+      if (values !== false) {
+        let { hostUsn, opponentUsn } = values;
+        setMatch({
+          hostName: hostUsn,
+          oppName: opponentUsn,
+        });
+      }
+    })
+  }
+
   const readyUp = () => {
     socket.emit('ready');
   }
@@ -108,7 +122,15 @@ const UsernameComponent = () => {
   })
 
   const showLobbys = () => {
+    getListLobbys();
     setShowLobbyStatus(!showLobbyStatus);
+  }
+
+  const getListLobbys = () => {
+    socket.emit("listLobbys", listLobbysInfo => {
+      setListLobbys(listLobbysInfo.roomsToClient);
+      console.log(listLobbysInfo);
+    })
   }
 
 
@@ -138,16 +160,10 @@ const UsernameComponent = () => {
       {
         showLobbyStatus && 
         <div className='absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col justify-centera'>
-          <div className='border flex flex-row justify-center items-center space-x-7'>
-            <div>1/2</div>
-            <div>Pacifica</div>
-            <div>Dave</div>
-          </div>          
-          <div className='border flex flex-row justify-center items-center space-x-7'>
-            <div>0/2</div>
-            <div>Bronies</div>
-            <div>Jerome</div>
-          </div>
+          {listLobbys?.map((lobbyInfo, index) => {
+            console.log(lobbyInfo);
+            return <LobbySelector roomInfo = {lobbyInfo} setRoomName = {() => {joinLobbys(lobbyInfo.roomTitle)}}/>
+          })}
         </div>
       }
 
