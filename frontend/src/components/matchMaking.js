@@ -16,6 +16,8 @@ const UsernameComponent = () => {
   const [gameStart, setGameStart] = useState(reconnect.startStatus === "PLAYING" ? true : false);
   const [deck, setDeck] = useState();
   const [winner, setWinner] = useState("");
+  const [showLobbyStatus, setShowLobbyStatus] = useState(false);
+  const [listLobbys, setListLobbys] = useState([]);
   const onChangeHandler = event => {
     setInputValue(event.target.value);
   };
@@ -63,7 +65,7 @@ const UsernameComponent = () => {
 
   const joinLobby = (e) => {
     socket.emit("join-room", inputValue, (values) => {
-      if (values != false) {
+      if (values !== false) {
         let { hostUsn, opponentUsn } = values;
         setMatch({
           hostName: hostUsn,
@@ -105,6 +107,10 @@ const UsernameComponent = () => {
     setWinner(winner);
   })
 
+  const showLobbys = () => {
+    setShowLobbyStatus(!showLobbyStatus);
+  }
+
 
 
   console.log(deck);
@@ -112,9 +118,12 @@ const UsernameComponent = () => {
 
     <>
       {
-        //Checks If Match has been joined, and game HAS NOT started
+        //Checks if match has not been joined
       }
       {!match && <div className='flex flex-col justify-center h-screen  w-6/12 mr-auto'>
+        <div className='flex flex-row justify-evenly items-center'>
+          <button onClick={showLobbys}>View Open Lobbys</button>
+        </div>
         <div className='flex flex-row justify-evenly items-center'>
           <input type="text" className='border' onChange={onChangeHandler}></input>
           <button onClick={createLobby}>Create Lobby</button>
@@ -127,12 +136,28 @@ const UsernameComponent = () => {
       </div>}
 
       {
+        showLobbyStatus && 
+        <div className='absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col justify-centera'>
+          <div className='border flex flex-row justify-center items-center space-x-7'>
+            <div>1/2</div>
+            <div>Pacifica</div>
+            <div>Dave</div>
+          </div>          
+          <div className='border flex flex-row justify-center items-center space-x-7'>
+            <div>0/2</div>
+            <div>Bronies</div>
+            <div>Jerome</div>
+          </div>
+        </div>
+      }
+
+      {
         //Checks If Match has been joined, and game HAS NOT started
       }
       {match && !gameStart &&
 
         <div className='flex flex-col justify-center items-center h-screen w-9/12 mr-auto'>
-          <div className=''>
+          <div className='border w-9/12 h-64 flex flex-row justify-center items-center space-x-7'>
             {match.oppName}
           </div>
           <div>
