@@ -26,17 +26,21 @@ const joinRoom = (io, socket) => {
                 const match = roomStore.get(room);
                 console.log("5")
 
-                match.opponent = new Player(socket.id, socket.username, "opponent", socket.handshake.auth.sessionID.toString());
-                console.log("3")
+                let newPlayer = new Player(socket.id, socket.username, socket.handshake.auth.sessionID.toString());
+                match.newPlayerJoined(newPlayer);
 
-                console.log(match);
-                let hostUsn = match.host.username;
-                let opponentUsn = match.opponent.username;
-                io.in(room).emit("player-joined", { hostUsn, opponentUsn });
+                let playerUsernames = [];
+                for (const [key, value] of Object.entries(match.players)) {
+                    console.log("BBBBBBBBBBBBBB")
+                    console.log(key);
+                    console.log("BBBBBBBBBBBBBB")
+                    playerUsernames.push(value.username);
+                  }
+                io.in(room).emit("player-joined", { ...playerUsernames });
 
-                cb({ hostUsn, opponentUsn });
+                cb({ ...playerUsernames });
 
-                startBothOnReady(socket, "opponent", room);
+                startBothOnReady(socket, newPlayer, room);
             } catch (err) {
                 console.log(err);
                 cb(false);

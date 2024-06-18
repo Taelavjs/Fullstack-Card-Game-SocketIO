@@ -1,16 +1,17 @@
 const { getRoomStore } = require('../utility/roomStore');
-const startBothOnReady = (socket, playerPos, room) => {
+const startBothOnReady = (socket, playerObject, room) => {
     socket.once("ready", () => {
         const roomStore = getRoomStore();
         const match = roomStore.get(room);
-        if (playerPos == "host") {
-            match.host.setReadyStatus(true);
-        } else {
-            match.opponent.setReadyStatus(true);
-        }
-        console.log("readied ", playerPos);
-
-        if (match.host.getReadyStatus() && match.opponent && match.opponent.getReadyStatus()) {
+        console.log("BBBBBBBBBBBB");
+        console.log(playerObject);
+        console.log(playerObject.socketID);
+        console.log("BBBBBBBBBBBB");
+        console.log(match.players);
+        match.players.get(playerObject.socketID).setReadyStatus(true);
+        console.log("readied ", playerObject);
+        
+        if (match.isAllReady()) {
             match.startMatch();
             console.log("match started yaya");
         }

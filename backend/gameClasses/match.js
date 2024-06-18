@@ -3,10 +3,21 @@ const Card = require('./../gameClasses/card');
 const { session } = require('../listeners/session');
 
 class Match {
+    /**
+     * 
+     * @param {Player} host 
+     * @param {*} opponent 
+     * @param {string} room 
+     * @param {int} round 
+     * @param {int} timer 
+     * @param {string} state 
+     * @param {*} io 
+     */
     constructor(host, opponent = null, room, round = 0, timer = 0, state = "LOBBY", io) {
         this.score = 0;
-        this.host = host;
-        this.opponent = opponent;
+        this.players = new Map();
+        this.players.set(host.socketID, host);
+
         this.roundNumber = round;
         this.timer = timer;
         this.state = state;
@@ -16,69 +27,98 @@ class Match {
         this.historyRound = [];
     }
 
+    newPlayerJoined(newPlayer) {
+        this.players.set(newPlayer.socketID, newPlayer);
+    }
+
+    isAllReady() {
+        console.log("this.players:", this.players);
+
+        for (const [key, value] of this.players.entries()) {
+            console.log("KEY FOR FOR EACH", key);
+            console.log(value)
+            if (value.getReadyStatus()) continue;
+            return false;
+        }
+        return true;
+    }
+
     startMatch() {
-        if (this.host.getReadyStatus() && this.opponent.getReadyStatus()) {
+        if (this.isAllReady()) {
             this.io.in(this.room).emit("game-start");
             console.log(`Both players in room ${this.room} are ready!`);
             this.createDeck();
             this.shuffleDeck();
-            this.host.setDeck(this.createPlayerHands(5));
-            this.opponent.setDeck(this.createPlayerHands(5));
+            this.setAllPlayersDeck();
             this.state = 'PLAYING';
             this.handOutDecks();
         }
     }
 
+    setAllPlayersDeck() {
+        for (const [key, value] of this.players.entries()) {
+            value.setDeck(this.createPlayerHands(2))
+        }
+    }
+
+
+
     handOutDecks() {
-        this.host.gameStart();
-        this.opponent.gameStart();
+        for (const [key, value] of this.players.entries()) {
+            value.gameStart();
+        }
         this.timerStart(20);
         this.turns();
     }
-    turns = () => {
-        if (this.opponent.noCardsRemaining ||
-            this.host.noCardsRemaining) {
 
+    noCardsRemainingCheck() {
+        console.log("checking 1223 123");
+        console.log(this.players.values());
+        for (const [key, value] of this.players.entries()) {
+            if (value.noCardsRemaining) return true;
+        }
+        return false;
+    }
+
+    turns = () => {
+        if (this.noCardsRemainingCheck()) {
             this.gameComplete();
             return;
         }
         this.timerRestart(20);
         console.log("TIMER STARTED AT 20");
         console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-        console.log("hosts card : ", this.host.selectedCard);
-        console.log("opponents card : ", this.opponent.selectedCard);
         let promisesToRun = [];
-        if(this.opponent.selectedCard == null) {
-            promisesToRun.push(this.opponent.chosenCardListener());
-        }
-        if(this.host.selectedCard == null){
-            promisesToRun.push(this.host.chosenCardListener());
+
+        for (const [key, value] of this.players.entries()) {
+            console.log("selected card: ", value.selectedCard);
+            console.log("available cards: ", value.deck);
+            if (value.selectedCard == null) {
+                promisesToRun.push(value.chosenCardListener());
+            }
         }
         console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-        
+
         Promise.all(promisesToRun)
             .then(([card1, card2]) => {
-                card1 = this.host.selectedCard;
-                card2 = this.opponent.selectedCard;
-                if (card1 == null || card2 == null){
-                    return;
+                let cards = [];
+                let highestCard = {};
+                for (const [key, value] of this.players.entries()) {
+                    if (value.selectedCard == null) return;
+                    cards.push(value.selectedCard);
+                    console.log(cards);
+                    if (value.selectedCard.value > highestCard) highestCard = { key: value.selectedCard.value };
                 }
-                console.log(card1, card2);
-                console.log("Match Both Cards Chosen");
-                if (parseInt(card1.value) > parseInt(card2.value)) {
-                    console.log("host wins");
-                    this.host.addCardToDeck([card1, card2]);
-                } else if (parseInt(card2.value) > parseInt(card1.value)) {
-                    console.log("opponent wins");
-                    this.opponent.addCardToDeck([card1, card2]);
-                } else {
-                    console.log("draw");
-                    this.opponent.addCardToDeck([card2]);
-                    this.host.addCardToDeck([card1]);
+
+                for (const [key, value] of this.players.entries()) {
+                    if (key in highestCard) {
+                        // WINNER PLAYER
+                        value.addCardToDeck([...cards]);
+                    }
+                    value.resetChosenCard();
                 }
-                this.host.resetChosenCard();
-                this.opponent.resetChosenCard();
-                this.recordRound(card1, card2);
+                console.log(cards);
+                this.recordRound(...cards);
                 console.log(this.historyRound);
                 this.turns();
 
@@ -91,12 +131,11 @@ class Match {
 
     }
 
-    recordRound = (hostSelectedCard, opponentSelectedCard) => {
+    recordRound = (cards) => {
         this.historyRound.push({
             roomName: this.room,
             roundNumber: this.roundNumber++,
-            hostSelection: { playerID: this.host.socketID, card: hostSelectedCard },
-            opponentSelection: { playerID: this.opponent.socketID, card: opponentSelectedCard }
+            cardsSelected: cards,
         });
     }
 
@@ -147,20 +186,17 @@ class Match {
     }
 
     gameComplete() {
-        var winner;
-        if (this.opponent.noCardsRemaining) {
-            winner = "host";
-        } else {
-            winner = "opponent";
+        var winner = "host";
+        for (const [key, value] of this.players.entries()) {
+            value.sendWinnerToPLayer(winner);
         }
-
-        this.host.sendWinnerToPLayer(winner);
-        this.opponent.sendWinnerToPLayer(winner);
         console.log(this.room, "will be deleted");
         let roomStore = require('../utility/roomStore').removeActiveRoom(this.room);
         const sessionHandler = require("../gameClasses/handlers/setupSessionStore");
-        sessionHandler.removePlayersActiveRoom(this.host.sessionID);
-        sessionHandler.removePlayersActiveRoom(this.opponent.sessionID);
+
+        for (const [key, value] of this.players.entries()) {
+            sessionHandler.removePlayersActiveRoom(value.sessionID);
+        }
 
         console.log(this.room, "will be deleted", roomStore);
         this.io.in(this.room).socketsLeave(this.room);

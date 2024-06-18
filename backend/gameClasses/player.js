@@ -1,8 +1,13 @@
 class Player {
-    constructor(socketID, username, roleName, sessionID) {
+    /**
+     * 
+     * @param {int} socketID 
+     * @param {string} username 
+     * @param {int} sessionID 
+     */
+    constructor(socketID, username, sessionID) {
         this.socketID = socketID;
         this.username = username;
-        this.roleName = roleName;
         this.deck = [];
         this.readyStatus = false;
         this.selectedCard = null;
