@@ -16,7 +16,7 @@ class Match {
     constructor(host, opponent = null, room, round = 0, timer = 0, state = "LOBBY", io) {
         this.score = 0;
         this.players = new Map();
-        this.players.set(host.socketID, host);
+        this.players.set(host.sessionID, host);
 
         this.roundNumber = round;
         this.timer = timer;
@@ -28,7 +28,7 @@ class Match {
     }
 
     newPlayerJoined(newPlayer) {
-        this.players.set(newPlayer.socketID, newPlayer);
+        this.players.set(newPlayer.sessionID, newPlayer);
     }
 
     isAllReady() {

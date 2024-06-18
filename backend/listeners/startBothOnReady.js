@@ -8,9 +8,9 @@ const startBothOnReady = (socket, playerObject, room) => {
         console.log(playerObject.socketID);
         console.log("BBBBBBBBBBBB");
         console.log(match.players);
-        match.players.get(playerObject.socketID).setReadyStatus(true);
+        match.players.get(playerObject.sessionID).setReadyStatus(true);
         console.log("readied ", playerObject);
-        
+
         if (match.isAllReady()) {
             match.startMatch();
             console.log("match started yaya");

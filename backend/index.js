@@ -61,8 +61,9 @@ let middleware;
       if (onConnection(sessionStore, socket)) {
         //RECONNECTED WITH SESSION ID
         console.log("welcome back!");
+        let sessionID = socket.handshake.auth.sessionID.toString();
         activeRoom = sessionHolder.getPreviousPlayerRooms(
-          socket.handshake.auth.sessionID.toString(),
+          sessionID,
           socket.id,
         );
 
@@ -72,37 +73,40 @@ let middleware;
           socket.join(activeRoom);
           console.log("socket has rejoined ", activeRoom);
           let playerGame = require('./utility/roomStore.js').getActiveRoom(activeRoom);
-          if (socket.username == playerGame.host.username) {
-            playerGame.host.newSocketID(socket.id);
-            startBothOnReady(socket, "host", activeRoom);
-          } else {
-            playerGame.opponent.newSocketID(socket.id);
-            startBothOnReady(socket, "opponent", activeRoom);
+          let playersUsernames = [];
+          for(const [key, value] of playerGame.players.entries()){
+            if(key == sessionID){
+              value.newSocketID(socket.id);
+              startBothOnReady(socket, value, activeRoom);
+              playersUsernames.push(value.username);
+            }
           }
+          // if (socket.username == playerGame.host.username) {
+          //   playerGame.host.newSocketID(socket.id);
+          //   startBothOnReady(socket, "host", activeRoom);
+          // } else {
+          //   playerGame.opponent.newSocketID(socket.id);
+          //   startBothOnReady(socket, "opponent", activeRoom);
+          // }
 
           socket.emit("reconnected-room", {
             roomName: activeRoom,
             startStatus: playerGame.state,
-            host: playerGame.host.username,
-            opponent: playerGame.opponent ? playerGame.opponent.username : null,
+            players : playersUsernames,
           })
 
 
 
           if (playerGame.state == "PLAYING") {
             console.log(socket.username);
-            if (socket.username == playerGame.host.username) {
-              socket.emit("game-start");
-              playerGame.host.sendDeck();
-              console.log("deckSending");
-              playerGame.turns();
-
-            } else {
-              socket.emit("game-start");
-              playerGame.opponent.sendDeck();
-              playerGame.turns();
+            for(const [key, value] of playerGame.players){
+              if (sessionID == key){
+                socket.emit("game-start");
+                value.sendDeck();
+                console.log("deckSending");
+                playerGame.turns();
+              }
             }
-
           }
         }
       };
