@@ -6,9 +6,11 @@ const listLobbys = (socket) => {
         let roomsToClient = [];
 
         roomStore?.forEach((roomInfo) => {
+            console.log(roomInfo.players.entries().next().value);
+        
             const roomToClient = {
                 roomTitle : roomInfo.room,
-                hostName : roomInfo.host.username,
+                hostName : roomInfo.players.entries().next().value.username,
                 numPlayers : 1,
             }
 
