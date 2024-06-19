@@ -84,12 +84,7 @@ let middleware;
 
           }
 
-          socket.on("match-settings", ({maxPlayers, minPlayers}, cb) => {
-            if (socket.sessionID !== playerGame.host.sessionID) { cb(false); }
-            playerGame.maxPlayerCount = maxPlayers;
-            playerGame.minNumPlayers = minPlayers;
-            cb(true);
-          })
+          playerGame.updateSettings(socket);
 
           socket.emit("reconnected-room", {
             roomName: activeRoom,

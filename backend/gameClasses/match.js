@@ -31,7 +31,12 @@ class Match {
     }
 
     updateSettings (socket) {
-
+        if (socket.sessionID !== this.host.sessionID) return;
+        socket.on("match-settings", ({maxPlayers, minPlayers}, cb) => {
+            this.maxPlayerCount = maxPlayers;
+            this.minNumPlayers = minPlayers;
+            cb(true);
+          })
 
     }
 

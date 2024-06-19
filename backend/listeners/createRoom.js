@@ -28,12 +28,7 @@ const createRoom = (socket, io) => {
         const createdMatch = new Match(hostPlayer, null, room, 0, 0, "LOBBY", io);
         setRoomStore(room, createdMatch);
         cb([hostPlayer.username]);
-        socket.on("match-settings", ({maxPlayers, minPlayers}, cb) => {
-            if (socket.sessionID !== createdMatch.host.sessionID) { cb(false); }
-            createdMatch.maxPlayerCount = maxPlayers;
-            createdMatch.minNumPlayers = minPlayers;
-            cb(true);
-        })
+        createdMatch.updateSettings(socket);
 
         startBothOnReady(socket, hostPlayer, room);
         
