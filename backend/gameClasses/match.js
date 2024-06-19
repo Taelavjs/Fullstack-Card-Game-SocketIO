@@ -30,6 +30,11 @@ class Match {
         this.maxPlayerCount = maxPlayerCount;
     }
 
+    updateSettings (socket) {
+
+
+    }
+
     canPlayerJoin () {
         if (this.state !== "LOBBY") return false;
         return this.maxPlayerCount > this.players.size;

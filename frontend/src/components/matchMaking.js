@@ -39,17 +39,17 @@ const UsernameComponent = () => {
     return Object.keys(obj).length === 0;
   }
 
-
+  const [isHost, setIsHost] = useState(false);
   const createLobby = (e) => {
     e.preventDefault();
     socket.emit("create-room", inputValue, cb => {
       if (!cb) {
-
         console.log("CREATED ROOM INSUCCESSFULLY");
         setErrorText("Invalid Lobby Id");
         return;
       }
       console.log("CREATED ROOM ", inputValue);
+      setIsHost(true);
       setMatch(cb);
 
       socket.on("player-joined", (players) => {
@@ -136,6 +136,14 @@ const UsernameComponent = () => {
   }
 
   console.log("match : ", match);
+  const [maxPlayers, setMaxPlayers] = useState('');
+  const [minPlayers, setMinPlayers] = useState('');
+  function handleCustomSettings () {
+    console.log("button clicked");
+    socket.emit("match-settings", {maxPlayers, minPlayers}, (cb) => {
+      console.log("settings updated? ", cb);
+    });
+  }
 
   return (
 
@@ -165,6 +173,37 @@ const UsernameComponent = () => {
           </>
         })}
       </div>
+
+      { 
+      <div className="absolute right-0 top-1/2 transform -translate-y-1/2 flex flex-col items-start justify-center space-y-4 bg-gray-200 p-4 rounded-l-lg">
+            <ul>
+                <li>
+                    <label htmlFor="maxPlayers">Max Number of Players:</label>
+                    <input 
+                        type="number" 
+                        id="maxPlayers" 
+                        name="maxPlayers" 
+                        value={maxPlayers} 
+                        onChange={(e) => setMaxPlayers(e.target.value)}
+                        required 
+                    />
+                </li>
+                <li>
+                    <label htmlFor="minPlayers">Min Number of Players:</label>
+                    <input 
+                        type="number" 
+                        id="minPlayers" 
+                        name="minPlayers" 
+                        value={minPlayers} 
+                        onChange={(e) => setMinPlayers(e.target.value)}
+                        required 
+                    />
+                </li>
+            </ul>
+        <button onClick={handleCustomSettings}>Submit</button>
+
+      </div>
+      }
 
       {
         showLobbyStatus && 

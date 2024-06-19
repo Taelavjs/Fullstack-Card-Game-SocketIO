@@ -72,6 +72,7 @@ let middleware;
         } else {
           socket.join(activeRoom);
           console.log("socket has rejoined ", activeRoom);
+
           let playerGame = require('./utility/roomStore.js').getActiveRoom(activeRoom);
           let playersUsernames = [];
           for(const [key, value] of playerGame.players.entries()){
@@ -82,6 +83,13 @@ let middleware;
             playersUsernames.push(value.username);
 
           }
+
+          socket.on("match-settings", ({maxPlayers, minPlayers}, cb) => {
+            if (socket.sessionID !== playerGame.host.sessionID) { cb(false); }
+            playerGame.maxPlayerCount = maxPlayers;
+            playerGame.minNumPlayers = minPlayers;
+            cb(true);
+          })
 
           socket.emit("reconnected-room", {
             roomName: activeRoom,
