@@ -1,19 +1,16 @@
 const { getRoomStore } = require('../utility/roomStore');
 const startBothOnReady = (socket, playerObject, room) => {
-    socket.once("ready", () => {
+    socket.on("ready", () => {
         const roomStore = getRoomStore();
         const match = roomStore.get(room);
-        console.log("BBBBBBBBBBBB");
-        console.log(playerObject);
-        console.log(playerObject.socketID);
-        console.log("BBBBBBBBBBBB");
         console.log(match.players);
+        if(match.checkMinNumToStart()) {
+            console.log("CHECK MIN AAAA");
+            return;
+        }
         match.players.get(playerObject.sessionID).setReadyStatus(true);
-        console.log("readied ", playerObject);
-
         if (match.isAllReady()) {
             match.startMatch();
-            console.log("match started yaya");
         }
     });
 };

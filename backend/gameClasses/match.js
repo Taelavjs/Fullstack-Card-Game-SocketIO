@@ -12,8 +12,9 @@ class Match {
      * @param {int} timer 
      * @param {string} state 
      * @param {*} io 
+     * @param {int} minNumPlayers
      */
-    constructor(host, opponent = null, room, round = 0, timer = 0, state = "LOBBY", io) {
+    constructor(host, opponent = null, room, round = 0, timer = 0, state = "LOBBY", io, minNumPlayers = 2) {
         this.score = 0;
         this.players = new Map();
         this.players.set(host.sessionID, host);
@@ -25,6 +26,12 @@ class Match {
         this.matchDeck = [];
         this.io = io;
         this.historyRound = [];
+        this.minNumPlayers = minNumPlayers;
+    }
+
+    checkMinNumToStart () {
+        console.log()
+        return this.minNumPlayers > this.players.size;
     }
 
     newPlayerJoined(newPlayer) {
@@ -200,7 +207,6 @@ class Match {
         for (const [key, value] of this.players.entries()) {
             value.sendWinnerToPLayer(winner);
         }
-        console.log(this.room, "will be deleted");
         let roomStore = require('../utility/roomStore').removeActiveRoom(this.room);
         const sessionHandler = require("../gameClasses/handlers/setupSessionStore");
 
@@ -208,11 +214,8 @@ class Match {
             sessionHandler.removePlayersActiveRoom(value.sessionID);
         }
 
-        console.log(this.room, "will be deleted", roomStore);
         this.io.in(this.room).socketsLeave(this.room);
         console.log("Room ", this.room, " Shut ON Socket IO side");
-
-
     }
 }
 function resolveAfter1Second() {

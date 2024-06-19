@@ -27,10 +27,11 @@ const createRoom = (socket, io) => {
             sessionHolder.setPlayersRoom(
                 socket.handshake.auth.sessionID.toString(),
                 room);
+            
             const hostPlayer = new Player(socket.id, socket.username, socket.handshake.auth.sessionID.toString());
             const createdMatch = new Match(hostPlayer, null, room, 0, 0, "LOBBY", io);
             setRoomStore(room, createdMatch);
-            cb(true);
+            cb([hostPlayer.username]);
             startBothOnReady(socket, hostPlayer, room);
         }
     });

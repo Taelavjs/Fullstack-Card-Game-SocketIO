@@ -19,7 +19,6 @@ class Player {
         let io = require('../socket').getio();
 
         io.to(this.socketID).emit("startMatch");
-        console.log("emitted start match");
     }
 
     setDeck(deck) {
@@ -48,7 +47,6 @@ class Player {
 
             let io = require('../socket').getio();
             io.sockets.sockets.get(this.socketID).once("disconnect", (reason) => {
-                console.log("disconnected while waiting for card choice");
                 reject("card not exist");
             });
 
@@ -56,10 +54,8 @@ class Player {
 
                 let foundCard = this.checkCardExists(arg);
                 if (typeof foundCard === 'object') {
-                    console.log("Card selected: ", foundCard);
                     resolve(foundCard);
                 } else {
-                    console.log(foundCard);
                     reject(new Error(foundCard));
                 }
             });
@@ -68,10 +64,6 @@ class Player {
 
     checkCardExists(cardID) {
         if(this.selectedCard) { return this.selectedCard;}
-        console.log("///////////////////////////////")
-        console.log(this.deck);
-        console.log(this.selectedCard);
-        console.log("///////////////////////////////")
 
         for (let index = 0; index < this.deck.length; index++) {
             const card = this.deck[index];
@@ -86,7 +78,6 @@ class Player {
     }
 
     resetChosenCard() {
-        console.log("RESETTING!");
         this.selectedCard = null;
         this.sendDeck();
     }

@@ -46,6 +46,7 @@ const UsernameComponent = () => {
         return;
       }
       console.log("CREATED ROOM ", inputValue);
+      setMatch(cb);
 
       socket.on("player-joined", (players) => {
         setMatch(players);
