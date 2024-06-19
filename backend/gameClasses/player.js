@@ -93,19 +93,21 @@ class Player {
 
     sendDeck() {
         let io = require('../socket').getio();
-        var array2;
+        let array2;
+        
         if (this.deck.length > 1) {
             array2 = [0, 1];
-
-        } else if (this.deck.length == 0) {
+        } else if (this.deck.length === 0) {
             this.noCardsRemaining = true;
             return;
-        } else {
-            array2 = [0, 0]
+        } else if (this.deck.length === 1) {
+            array2 = [0];  // Handle the case where there is exactly one card
         }
-        var deckToGivePlayer = array2.map(i => this.deck[i]);
+    
+        let deckToGivePlayer = array2.map(i => this.deck[i]);
         io.to(this.socketID).emit("deck-update", deckToGivePlayer);
     }
+    
 
     setReadyStatus(status) {
         this.readyStatus = status;
