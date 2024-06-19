@@ -1,31 +1,39 @@
-import './../App.css';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import socket from '../socket';
 
 const Card = ({ cardValue, cardName, cardID }) => {
-    const [isClicked, setIsClicked] = useState(false);
+  const [isClicked, setIsClicked] = useState(false);
 
-    const selectCard = () => {
-        setIsClicked(true); // Set isClicked to true when the card is clicked
-        socket.emit("chosen-card", cardID);
-        console.log(cardID);
-    }
+  const selectCard = () => {
+    setIsClicked(true); // Set isClicked to true when the card is clicked
+    socket.emit('chosen-card', cardID);
+    console.log(cardID);
+  };
 
-    return (
-        <div
-            onClick={selectCard}
-            className={`card-container border border-green-300 w-3/12 min-h-full flex flex-col justify-center items-center space-y-4
-            ease-in ${isClicked ? 'animate-pulse' : ''}`} // Add animate-pulse class conditionally
-            style={{
-                backgroundImage: `url('/TCG_TEMPLATES/Card_Front_Base.png')`,
-                backgroundSize: '100% 100%',
-                backgroundPosition: 'center'
-            }}
-        >
-            <div>{cardName}</div>
-            <div>{cardValue}</div>
-        </div>
-    );
-}
+  // Pastel colors inspired by the bisexual flag
+  const pastelColors = {
+    pink: '#FFB6C1',
+    purple: '#9370DB',
+    blue: '#87CEFA',
+  };
+
+  return (
+    <div
+      onClick={selectCard}
+      className={`card-container border border-gray-300 w-48 h-72 flex flex-col justify-center items-center space-y-4 ${isClicked ? 'animate-pulse' : ''}`}
+      style={{
+        backgroundImage: `linear-gradient(to bottom right, ${pastelColors.pink}, ${pastelColors.purple}, ${pastelColors.blue})`,
+        backgroundSize: '100% 100%',
+        backgroundPosition: 'center',
+        boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
+        borderRadius: '8px',
+        cursor: 'pointer',
+      }}
+    >
+      <div className="text-white font-bold">{cardName}</div>
+      <div className="text-white">{cardValue}</div>
+    </div>
+  );
+};
 
 export default Card;

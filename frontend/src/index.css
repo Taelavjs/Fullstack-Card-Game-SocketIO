@@ -6,3 +6,61 @@ html, body, #app, #app>div {
   height: 100%;
   background-color: #555555;
 }
+
+/* Define custom pastel colors */
+.bg-pastel-blue { background-color: #A8D8EA; } /* Light Blue */
+.bg-pastel-blue-light { background-color: #D1EEFC; } /* Lighter Blue */
+.bg-pastel-blue-dark { background-color: #77BFE2; } /* Darker Blue */
+.bg-pastel-pink { background-color: #F7A8B8; } /* Light Pink */
+.bg-pastel-pink-light { background-color: #FCD2E1; } /* Lighter Pink */
+.bg-pastel-pink-dark { background-color: #F484A6; } /* Darker Pink */
+.bg-pastel-purple { background-color: #C5B3E5; } /* Light Purple */
+.bg-pastel-purple-dark { background-color: #A88FD6; } /* Darker Purple */
+.text-pastel-red { color: #E57373; } /* Red for Error Text */
+
+/* Define custom bi flag colors */
+.bg-gradient-to-b {
+  background-image: linear-gradient(to bottom, #D80073, #9B4F96, #3C6EFC);
+}
+
+/* Slide-in animation */
+.slide-in {
+  animation: slideIn 0.3s ease-out forwards;
+  z-index: 1000; /* Ensure the lobby selector is above other content */
+}
+
+@keyframes slideIn {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+/* Slide-out animation */
+.slide-out {
+  animation: slideOut 0.3s ease-in forwards;
+  z-index: -1; /* Hide lobby selector off-screen */
+}
+
+@keyframes slideOut {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-100%);
+  }
+}
+
+/* Define pastel color gradient backgrounds */
+.bg-gradient-to-br {
+  background: linear-gradient(to bottom right, #326788, #96636b, #654c97);
+}
+
+/* Modern border styling */
+.border-2 {
+  border-width: 2px;
+  border-style: solid;
+  border-color: rgba(0, 0, 0, 0.1); /* Adjust border color to fit your design */
+}
