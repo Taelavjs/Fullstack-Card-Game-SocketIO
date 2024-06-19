@@ -14,7 +14,7 @@ class Match {
      * @param {*} io 
      * @param {int} minNumPlayers
      */
-    constructor(host, opponent = null, room, round = 0, timer = 0, state = "LOBBY", io, minNumPlayers = 2) {
+    constructor(host, opponent = null, room, round = 0, timer = 0, state = "LOBBY", io, minNumPlayers = 2, maxPlayerCount = 3) {
         this.score = 0;
         this.players = new Map();
         this.players.set(host.sessionID, host);
@@ -27,6 +27,12 @@ class Match {
         this.io = io;
         this.historyRound = [];
         this.minNumPlayers = minNumPlayers;
+        this.maxPlayerCount = maxPlayerCount;
+    }
+
+    canPlayerJoin () {
+        if (this.state !== "LOBBY") return false;
+        return this.maxPlayerCount > this.players.size;
     }
 
     checkMinNumToStart () {
@@ -94,17 +100,13 @@ class Match {
         }
         this.timerRestart(20);
         console.log("TIMER STARTED AT 20");
-        console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
         let promisesToRun = [];
 
         for (const [key, value] of this.players.entries()) {
-            console.log("selected card: ", value.selectedCard);
-            console.log("available cards: ", value.deck);
             if (value.selectedCard == null) {
                 promisesToRun.push(value.chosenCardListener());
             }
         }
-        console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 
         Promise.all(promisesToRun)
             .then(([card1, card2]) => {
@@ -115,22 +117,17 @@ class Match {
                     if (value.selectedCard == null) return;
                     cards.push(value.selectedCard);
                     console.log("cards : ", cards);
-                    console.log(value.selectedCard.value);
                     if (parseInt(value.selectedCard.value) > highestCard) {
                         highestCard = value.selectedCard.value;
                         highestCardPlayer = key;
                     }
                 }
-                console.log("::::::::::::::::");
-                console.log(this.players.entries());
                 for (const [key, value] of this.players.entries()) {
                     console.log(key, value, highestCard);
                     if (key == highestCardPlayer) {
                         // WINNER PLAYER
                         console.log("cards to add : ", cards);
                         value.addCardToDeck([...cards]);
-                        console.log("LLLLLLLL")
-                        console.log(key, highestCard);
                     }
                     value.resetChosenCard();
                 }

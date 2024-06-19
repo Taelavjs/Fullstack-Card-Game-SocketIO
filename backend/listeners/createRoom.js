@@ -14,26 +14,22 @@ const {
 
 const createRoom = (socket, io) => {
     socket.on("create-room", (room, cb) => {
-        console.log(getClientsInRoom(io, room));
-
         if (getClientsInRoom(io, room) >= 1) {
             console.log(room);
-
             cb(false);
-        } else {
-            console.log(room);
-
-            socket.join(room);
-            sessionHolder.setPlayersRoom(
-                socket.handshake.auth.sessionID.toString(),
-                room);
-            
-            const hostPlayer = new Player(socket.id, socket.username, socket.handshake.auth.sessionID.toString());
-            const createdMatch = new Match(hostPlayer, null, room, 0, 0, "LOBBY", io);
-            setRoomStore(room, createdMatch);
-            cb([hostPlayer.username]);
-            startBothOnReady(socket, hostPlayer, room);
+            return;
         }
+        socket.join(room);
+        sessionHolder.setPlayersRoom(
+            socket.handshake.auth.sessionID.toString(),
+            room);
+        
+        const hostPlayer = new Player(socket.id, socket.username, socket.handshake.auth.sessionID.toString());
+        const createdMatch = new Match(hostPlayer, null, room, 0, 0, "LOBBY", io);
+        setRoomStore(room, createdMatch);
+        cb([hostPlayer.username]);
+        startBothOnReady(socket, hostPlayer, room);
+        
     });
 };
 

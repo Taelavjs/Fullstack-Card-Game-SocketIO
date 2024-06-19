@@ -28,6 +28,10 @@ const UsernameComponent = () => {
     }
   }, [reconnect])
 
+  const handleUsernamesList = (obj) => {
+    
+  }
+
   function isEmpty(obj) {
     if (obj === undefined) {
       return false;
@@ -66,6 +70,11 @@ const UsernameComponent = () => {
       if (values !== false) {
         setMatch(values);
       }
+
+      socket.on("player-joined", (players) => {
+        setMatch(players);
+        console.log("PLAYERS IN ROOM ", players);
+      })
     })
   }
 
@@ -80,6 +89,11 @@ const UsernameComponent = () => {
       } else {
         setErrorText("Error Occured");
       }
+
+      socket.on("player-joined", (players) => {
+        setMatch(players);
+        console.log("PLAYERS IN ROOM ", players);
+      })
     })
   }
 
@@ -144,7 +158,7 @@ const UsernameComponent = () => {
         </div>
       </div>}
 
-      <div class="absolute left-0 top-1/2 transform -translate-y-1/2 flex flex-col items-start justify-center space-y-4 bg-gray-200 p-4 rounded-r-lg">
+      <div className="absolute left-0 top-1/2 transform -translate-y-1/2 flex flex-col items-start justify-center space-y-4 bg-gray-200 p-4 rounded-r-lg">
         {match?.map((playerName) => {
           return <>
             <div>{playerName}</div>

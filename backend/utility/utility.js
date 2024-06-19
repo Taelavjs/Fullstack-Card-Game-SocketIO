@@ -15,6 +15,15 @@ const getClientsInRoom = (io, room) => {
     return usersinroom;
 }
 
+const returnUsersWithReadyStatus = (listPlayers) => {
+    let playerUsernames = [];
+    listPlayers.forEach((value, key) => {
+        playerUsernames.push({[value.username] : value.readyStatus});
+    })
+
+    return playerUsernames;
+}
+
 
 
 module.exports = {
