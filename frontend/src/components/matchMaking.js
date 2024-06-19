@@ -10,6 +10,8 @@ const UsernameComponent = () => {
 
   const reconnect = useContext(UserContext);
   console.log("Using context, the object's : ", reconnect);
+  const [isHost, setIsHost] = useState(reconnect.isHost !== undefined ? reconnect.isHost : false);
+  console.log("isHost : ", isHost);
 
   const [inputValue, setInputValue] = useState("");
   const [errText, setErrorText] = useState("");
@@ -25,6 +27,7 @@ const UsernameComponent = () => {
   useEffect(() => {
     if (!isEmpty(reconnect)) {
       setMatch(reconnect.players);
+      setIsHost(reconnect.isHost);
     }
   }, [reconnect])
 
@@ -39,7 +42,6 @@ const UsernameComponent = () => {
     return Object.keys(obj).length === 0;
   }
 
-  const [isHost, setIsHost] = useState(false);
   const createLobby = (e) => {
     e.preventDefault();
     socket.emit("create-room", inputValue, cb => {
@@ -174,7 +176,7 @@ const UsernameComponent = () => {
         })}
       </div>
 
-      { 
+      { isHost &&
       <div className="absolute right-0 top-1/2 transform -translate-y-1/2 flex flex-col items-start justify-center space-y-4 bg-gray-200 p-4 rounded-l-lg">
             <ul>
                 <li>

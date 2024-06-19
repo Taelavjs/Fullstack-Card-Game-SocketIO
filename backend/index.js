@@ -85,11 +85,11 @@ let middleware;
           }
 
           playerGame.updateSettings(socket);
-
           socket.emit("reconnected-room", {
             roomName: activeRoom,
             startStatus: playerGame.state,
             players : playersUsernames,
+            isHost : sessionID == playerGame.host.sessionID,
           })
 
 
