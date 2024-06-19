@@ -6,12 +6,17 @@ const listLobbys = (socket) => {
         let roomsToClient = [];
 
         roomStore?.forEach((roomInfo) => {
-            console.log(roomInfo.players.entries().next().value);
+            console.log(roomInfo.players);
+            console.log("//////////////////")
+            console.log("//////////////////")
+            console.log("//////////////////")
+            console.log("//////////////////")
         
             const roomToClient = {
                 roomTitle : roomInfo.room,
-                hostName : roomInfo.players.entries().next().value.username,
-                numPlayers : 1,
+                hostName : roomInfo.host.username,
+                numPlayers : roomInfo.players.size,
+                maxNumPlayers : roomInfo.maxPlayerCount,
             }
 
             roomsToClient.push(roomToClient);

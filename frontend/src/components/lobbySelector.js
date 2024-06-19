@@ -4,11 +4,11 @@ import socket from '../socket';
 
 const LobbySelector = ({roomInfo, setRoomName}) => {
     console.log(roomInfo);
-    const { numPlayers, maxRoomNum, hostName, roomTitle } = roomInfo;
+    const { numPlayers, maxNumPlayers, hostName, roomTitle } = roomInfo;
 
     return(
         <div className='border flex flex-row justify-center items-center space-x-7' onClick={() => setRoomName()}>
-            <div>{numPlayers}/{maxRoomNum}</div>
+            <div>{numPlayers}/{maxNumPlayers}</div>
             <div>{roomTitle}</div>
             <div>{hostName}</div>
         </div> 

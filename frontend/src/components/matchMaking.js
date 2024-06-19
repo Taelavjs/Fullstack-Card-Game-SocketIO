@@ -195,7 +195,8 @@ const UsernameComponent = () => {
                 type="number" 
                 id="maxPlayers" 
                 name="maxPlayers" 
-                value={maxPlayers} 
+                defaultValue={settings ? settings.maxPlayers : 0}
+
                 onChange={(e) => setMaxPlayers(e.target.value)}
                 required 
               />
@@ -206,7 +207,7 @@ const UsernameComponent = () => {
                 type="number" 
                 id="minPlayers" 
                 name="minPlayers" 
-                value={minPlayers} 
+                defaultValue={settings ? settings.minPlayers : 0}
                 onChange={(e) => setMinPlayers(e.target.value)}
                 required 
               />
