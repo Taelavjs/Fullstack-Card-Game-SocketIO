@@ -91,6 +91,7 @@ let middleware;
             players : playersUsernames,
             isHost : sessionID == playerGame.host.sessionID,
           })
+          playerGame.emitMatchSettings();
 
 
 

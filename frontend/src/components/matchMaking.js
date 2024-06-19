@@ -21,6 +21,7 @@ const UsernameComponent = () => {
   const [winner, setWinner] = useState("");
   const [showLobbyStatus, setShowLobbyStatus] = useState(false);
   const [listLobbys, setListLobbys] = useState([]);
+  const [settings, setSettings] = useState(null);
   const onChangeHandler = event => {
     setInputValue(event.target.value);
   };
@@ -122,6 +123,12 @@ const UsernameComponent = () => {
     setDeck(deck);
   })
 
+  socket.on("settings_details", (obj) => {
+    console.log("THIS RAN SETTINGS UPDATE");
+    setSettings(obj);
+    console.log("SETTINGS : ", settings);
+  })
+
   socket.on("winner-decided", (winner) => {
     setWinner(winner);
   })
@@ -176,36 +183,51 @@ const UsernameComponent = () => {
         })}
       </div>
 
-      { isHost &&
+      <div>
       <div className="absolute right-0 top-1/2 transform -translate-y-1/2 flex flex-col items-start justify-center space-y-4 bg-gray-200 p-4 rounded-l-lg">
-            <ul>
-                <li>
-                    <label htmlFor="maxPlayers">Max Number of Players:</label>
-                    <input 
-                        type="number" 
-                        id="maxPlayers" 
-                        name="maxPlayers" 
-                        value={maxPlayers} 
-                        onChange={(e) => setMaxPlayers(e.target.value)}
-                        required 
-                    />
-                </li>
-                <li>
-                    <label htmlFor="minPlayers">Min Number of Players:</label>
-                    <input 
-                        type="number" 
-                        id="minPlayers" 
-                        name="minPlayers" 
-                        value={minPlayers} 
-                        onChange={(e) => setMinPlayers(e.target.value)}
-                        required 
-                    />
-                </li>
-            </ul>
-        <button onClick={handleCustomSettings}>Submit</button>
 
+      {isHost && match != undefined && match.length > 0 && !gameStart &&(
+        <div>
+          <ul>
+            <li>
+              <label htmlFor="maxPlayers">Max Number of Players:</label>
+              <input 
+                type="number" 
+                id="maxPlayers" 
+                name="maxPlayers" 
+                value={maxPlayers} 
+                onChange={(e) => setMaxPlayers(e.target.value)}
+                required 
+              />
+            </li>
+            <li>
+              <label htmlFor="minPlayers">Min Number of Players:</label>
+              <input 
+                type="number" 
+                id="minPlayers" 
+                name="minPlayers" 
+                value={minPlayers} 
+                onChange={(e) => setMinPlayers(e.target.value)}
+                required 
+              />
+            </li>
+          </ul>
+          <button onClick={handleCustomSettings}>Submit</button>
+        </div>
+      )}
+      <div className='flex flex-row'>
+        <div>Max Players : </div><div>{settings?.maxPlayers}</div>
+      </div>      
+      <div className='flex flex-row'>
+        <div>Min Players : </div><div>{settings?.minPlayers}</div>
+      </div>      
+      <div className='flex flex-row'>
+        <div>Timer : </div><div>{settings?.timer}</div>
       </div>
-      }
+    </div>
+    </div>
+    
+      
 
       {
         showLobbyStatus && 

@@ -29,6 +29,7 @@ const createRoom = (socket, io) => {
         setRoomStore(room, createdMatch);
         cb([hostPlayer.username]);
         createdMatch.updateSettings(socket);
+        createdMatch.emitMatchSettings();
 
         startBothOnReady(socket, hostPlayer, room);
         

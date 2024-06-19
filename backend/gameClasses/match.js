@@ -30,14 +30,25 @@ class Match {
         this.maxPlayerCount = maxPlayerCount;
     }
 
-    updateSettings (socket) {
+    addNewPlayer () {
+
+    }
+
+    updateSettings(socket) {
         if (socket.sessionID !== this.host.sessionID) return;
-        socket.on("match-settings", ({maxPlayers, minPlayers}, cb) => {
+    
+        socket.on("match-settings", ({ maxPlayers, minPlayers }, cb) => {
+            if (maxPlayers > 15 || minPlayers < 2 || maxPlayers > minPlayers || maxPlayers < this.players.size || minPlayers < this.players.size) {
+                cb(false);
+                return; 
+            }
             this.maxPlayerCount = maxPlayers;
             this.minNumPlayers = minPlayers;
             cb(true);
-          })
-
+    
+            // Emit the updated settings after they have been changed
+            this.emitMatchSettings();
+        });
     }
 
     canPlayerJoin () {
@@ -50,8 +61,24 @@ class Match {
         return this.minNumPlayers > this.players.size;
     }
 
+    emitMatchSettings(){
+        console.log("EMIT SETTINGS BRO");
+
+        let io = require('../socket').getio();
+
+        io.to(this.room).emit("settings_details", (
+            {
+                maxPlayers : this.maxPlayerCount, 
+                minPlayers : this.minNumPlayers,
+                timer : this.timer
+            }))
+    }
+
     newPlayerJoined(newPlayer) {
         this.players.set(newPlayer.sessionID, newPlayer);
+        this.emitMatchSettings();
+
+        console.log("emitted settings");
     }
 
     isAllReady() {

@@ -41,6 +41,7 @@ function App() {
       console.log(roomInformationObj);
       console.log("ran");
       setReconnectObjectState(roomInformationObj);
+      
 
     })
   }, [])

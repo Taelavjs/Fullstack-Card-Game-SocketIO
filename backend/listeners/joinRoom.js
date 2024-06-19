@@ -29,6 +29,7 @@ const joinRoom = (io, socket) => {
             console.log("RETURNED FALSEY");
 
             console.log("5")
+            socket.join(room);
 
             let newPlayer = new Player(socket.id, socket.username, socket.handshake.auth.sessionID.toString());
             match.newPlayerJoined(newPlayer);
@@ -42,7 +43,6 @@ const joinRoom = (io, socket) => {
                 playerUsernames.push(value.username);
                 })
                 
-            socket.join(room);
 
             io.in(room).emit("player-joined", playerUsernames );
             console.log(playerUsernames);
