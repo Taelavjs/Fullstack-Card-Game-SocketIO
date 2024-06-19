@@ -12,7 +12,7 @@ function App() {
   const [sessionID, setSessionId] = useState(sessionStorage.getItem("sessionId"));
   const [userID, setUserID] = useState(sessionStorage.getItem("userID"));
   const [reconnectObjectState, setReconnectObjectState] = useState({});
-
+  const [isConnected, setIsConnected] = useState(true);
 
   useEffect(() => {
     if (sessionID) {
@@ -29,8 +29,15 @@ function App() {
     socket.on('connect', function () {
       console.log(socket);
 
+      // setTimeout(() => {
+      //   // close the low-level connection and trigger a reconnection
+      //   console.log("rans");
+      //   setIsConnected(socket.connected);
+      //   socket.io.engine.close();
+      // }, Math.random() * 5000 + 1000);
+
     });
-    socket.once("reconnected-room", (roomInformationObj) => {
+    socket.on("reconnected-room", (roomInformationObj) => {
       console.log(roomInformationObj);
       console.log("ran");
       setReconnectObjectState(roomInformationObj);
@@ -50,7 +57,12 @@ function App() {
 
   return (
     <>
+      <div id="sticky-banner" tabIndex="-1" className="fixed top-0 start-0 z-50 flex justify-between w-full p-4 border-b border-gray-200 bg-gray-50 dark:bg-gray-700 dark:border-gray-600">
+        <div className='flex items-center'>
+          {isConnected ? 'Connected' : 'Disconnected'}
 
+        </div>
+      </div>
       {userID == null && sessionID == null && <UsernameComponent sessionId={sessionID} setSessionId={setSessionId} userID={userID} setUserID={setUserID} />}
       <UserContext.Provider value={reconnectObjectState}>
         {<MatchMaking />}

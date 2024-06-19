@@ -17,7 +17,7 @@ class Match {
         this.score = 0;
         this.players = new Map();
         this.players.set(host.sessionID, host);
-
+        this.host = host;
         this.roundNumber = round;
         this.timer = timer;
         this.state = state;

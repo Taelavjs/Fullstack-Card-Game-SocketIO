@@ -78,16 +78,10 @@ let middleware;
             if(key == sessionID){
               value.newSocketID(socket.id);
               startBothOnReady(socket, value, activeRoom);
-              playersUsernames.push(value.username);
             }
+            playersUsernames.push(value.username);
+
           }
-          // if (socket.username == playerGame.host.username) {
-          //   playerGame.host.newSocketID(socket.id);
-          //   startBothOnReady(socket, "host", activeRoom);
-          // } else {
-          //   playerGame.opponent.newSocketID(socket.id);
-          //   startBothOnReady(socket, "opponent", activeRoom);
-          // }
 
           socket.emit("reconnected-room", {
             roomName: activeRoom,

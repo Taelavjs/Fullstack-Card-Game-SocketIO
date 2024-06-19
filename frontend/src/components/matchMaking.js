@@ -13,7 +13,7 @@ const UsernameComponent = () => {
 
   const [inputValue, setInputValue] = useState("");
   const [errText, setErrorText] = useState("");
-  const [match, setMatch] = useState();
+  const [match, setMatch] = useState(reconnect ? reconnect.players : null);
   const [gameStart, setGameStart] = useState(reconnect.startStatus === "PLAYING" ? true : false);
   const [deck, setDeck] = useState();
   const [winner, setWinner] = useState("");
@@ -24,13 +24,7 @@ const UsernameComponent = () => {
   };
   useEffect(() => {
     if (!isEmpty(reconnect)) {
-      console.log(reconnect);
-      console.log("Game start var : ", gameStart, match);
-      setMatch({
-        hostName: reconnect.host,
-        oppName: reconnect.opponent,
-      });
-      console.log(match);
+      setMatch(reconnect.players);
     }
   }, [reconnect])
 
@@ -46,18 +40,18 @@ const UsernameComponent = () => {
     e.preventDefault();
     socket.emit("create-room", inputValue, cb => {
       if (!cb) {
+
+        console.log("CREATED ROOM INSUCCESSFULLY");
         setErrorText("Invalid Lobby Id");
         return;
       }
-      socket.once("player-joined", ({ hostUsn, opponentUsn }) => {
-        setMatch({
-          hostName: hostUsn,
-          oppName: opponentUsn,
-        });
-        console.log(hostUsn, opponentUsn);
+      console.log("CREATED ROOM ", inputValue);
+
+      socket.on("player-joined", (players) => {
+        setMatch(players);
+        console.log("PLAYERS IN ROOM ", players);
       })
 
-      console.log(cb);
     });
 
   }
@@ -66,12 +60,10 @@ const UsernameComponent = () => {
 
   const joinLobby = (e) => {
     socket.emit("join-room", inputValue, (values) => {
+      console.log("JOINGED ROOM RETURNED : ", values);
+
       if (values !== false) {
-        let { hostUsn, opponentUsn } = values;
-        setMatch({
-          hostName: hostUsn,
-          oppName: opponentUsn,
-        });
+        setMatch(values);
       }
     })
   }
@@ -79,12 +71,11 @@ const UsernameComponent = () => {
   const joinLobbys = (roomName) => {
     setShowLobbyStatus(false);
     socket.emit("join-room", roomName, (values) => {
+      console.log(roomName, values);
+      console.log("JOINGED ROOM RETURNED : ", values);
+
       if (values !== false) {
-        let { hostUsn, opponentUsn } = values;
-        setMatch({
-          hostName: hostUsn,
-          oppName: opponentUsn,
-        });
+        setMatch(values);
       } else {
         setErrorText("Error Occured");
       }
@@ -100,16 +91,12 @@ const UsernameComponent = () => {
     setDeck([]);
 
     setDeck(deck);
-    console.log(deck);
-    console.log("start her up");
-    console.log(socket);
 
   })
 
   socket.on("wrong-card-id", deck => {
     setDeck([]);
     setDeck(deck);
-    console.log("wrong id");
   })
 
   socket.on("deck-update", deck => {
@@ -119,7 +106,6 @@ const UsernameComponent = () => {
   })
 
   socket.on("winner-decided", (winner) => {
-    console.log(winner);
     setWinner(winner);
   })
 
@@ -131,13 +117,11 @@ const UsernameComponent = () => {
   const getListLobbys = () => {
     socket.emit("listLobbys", listLobbysInfo => {
       setListLobbys(listLobbysInfo.roomsToClient);
-      console.log(listLobbysInfo);
     })
   }
 
+  console.log("match : ", match);
 
-
-  console.log(deck);
   return (
 
     <>
@@ -159,11 +143,18 @@ const UsernameComponent = () => {
         </div>
       </div>}
 
+      <div class="absolute left-0 top-1/2 transform -translate-y-1/2 flex flex-col items-start justify-center space-y-4 bg-gray-200 p-4 rounded-r-lg">
+        {match?.map((playerName) => {
+          return <>
+            <div>{playerName}</div>
+          </>
+        })}
+      </div>
+
       {
         showLobbyStatus && 
         <div className='absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col justify-centera'>
           {listLobbys?.map((lobbyInfo, index) => {
-            console.log(lobbyInfo);
             return <LobbySelector roomInfo = {lobbyInfo} setRoomName = {() => {joinLobbys(lobbyInfo.roomTitle)}}/>
           })}
         </div>
@@ -172,15 +163,15 @@ const UsernameComponent = () => {
       {
         //Checks If Match has been joined, and game HAS NOT started
       }
-      {match && !gameStart &&
+      {match != undefined && match.length > 0 && !gameStart &&
 
         <div className='flex flex-col justify-center items-center h-screen w-9/12 mr-auto'>
-          <div className='border w-9/12 h-64 flex flex-row justify-center items-center space-x-7'>
-            {match.oppName}
-          </div>
-          <div>
-            {match.hostName}
-          </div>
+          {match.map((playerName, index) => {
+            return <><div>
+              {playerName}
+            </div></>
+          })}
+
           <button onClick={readyUp}>Ready?</button>
 
         </div>}
