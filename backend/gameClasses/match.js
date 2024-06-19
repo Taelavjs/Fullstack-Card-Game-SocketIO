@@ -102,18 +102,28 @@ class Match {
         Promise.all(promisesToRun)
             .then(([card1, card2]) => {
                 let cards = [];
-                let highestCard = {};
+                let highestCard = 0;
+                let highestCardPlayer = "";
                 for (const [key, value] of this.players.entries()) {
                     if (value.selectedCard == null) return;
                     cards.push(value.selectedCard);
-                    console.log(cards);
-                    if (value.selectedCard.value > highestCard) highestCard = { key: value.selectedCard.value };
+                    console.log("cards : ", cards);
+                    console.log(value.selectedCard.value);
+                    if (parseInt(value.selectedCard.value) > highestCard) {
+                        highestCard = value.selectedCard.value;
+                        highestCardPlayer = key;
+                    }
                 }
-
+                console.log("::::::::::::::::");
+                console.log(this.players.entries());
                 for (const [key, value] of this.players.entries()) {
-                    if (key in highestCard) {
+                    console.log(key, value, highestCard);
+                    if (key == highestCardPlayer) {
                         // WINNER PLAYER
+                        console.log("cards to add : ", cards);
                         value.addCardToDeck([...cards]);
+                        console.log("LLLLLLLL")
+                        console.log(key, highestCard);
                     }
                     value.resetChosenCard();
                 }
