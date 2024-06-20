@@ -33,9 +33,7 @@ const Matchmaking = () => {
     }
     return Object.keys(obj).length === 0;
   }
-
-
-
+  
   socket.on("winner-decided", (winner) => {
     setWinner(winner);
   })

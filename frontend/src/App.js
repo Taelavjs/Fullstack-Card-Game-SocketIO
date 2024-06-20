@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import UsernameComponent from './components/usernameComponent';
-import MatchMaking from './components/matchMaking';
+import MatchMaking from './pages/matchMaking';
 import socket from './socket';
 import { createContext } from "react";
 import ReactDOM from "react-dom/client";

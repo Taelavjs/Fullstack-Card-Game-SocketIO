@@ -1,12 +1,8 @@
 import { useEffect, useState } from "react";
 
-import Card from './card';
+import Card from '../components/card';
 const GameScreen = ({setGameStart, socket}) => {
     const [deck, setDeck] = useState([]);
-
-
-
-
 
       useEffect(() => {
         socket.on("deck-update", deck => {
