@@ -1,6 +1,14 @@
+import { useEffect } from "react";
 
 
-const LobbyReadyScreen = ({readyUp, match}) => {
+const LobbyReadyScreen = ({match, socket}) => {
+    useEffect(() => {
+
+    }, [socket])
+    const readyUp = () => {
+        socket.emit('ready');
+      }
+
 
 
     return (

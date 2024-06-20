@@ -38,7 +38,7 @@ class Match {
         if (socket.sessionID !== this.host.sessionID) return;
     
         socket.on("match-settings", ({ maxPlayers, minPlayers }, cb) => {
-            if (maxPlayers > 15 || minPlayers < 2 || maxPlayers > minPlayers || maxPlayers < this.players.size || minPlayers < this.players.size) {
+            if (!(maxPlayers <= 15 && minPlayers >= 2 && maxPlayers >= minPlayers && maxPlayers >= this.players.size && minPlayers >= this.players.size && maxPlayers >= minPlayers)) {
                 cb(false);
                 return; 
             }

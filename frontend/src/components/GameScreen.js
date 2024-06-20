@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import Card from './card';
 const GameScreen = ({setGameStart, socket}) => {
@@ -19,7 +19,7 @@ const GameScreen = ({setGameStart, socket}) => {
           setDeck([]);
           setDeck(deck);
         })
-      }, [])
+      }, [socket])
 
 
     return (

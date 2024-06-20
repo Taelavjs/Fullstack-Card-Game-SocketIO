@@ -1,9 +1,7 @@
 import './../App.css';
 import { useEffect, useState } from 'react';
 import socket from '../socket';
-import Card from './card';
-import LobbySelector from './lobbySelector';
-import { createContext, useContext } from "react";
+import { useContext } from "react";
 import { UserContext } from '../App';
 import LobbyInput from './LobbyInput';
 import LobbyReadyScreen from './LobbyReadyScreen';
@@ -29,10 +27,6 @@ const Matchmaking = () => {
     }
   }, [reconnect])
 
-  const handleUsernamesList = (obj) => {
-
-  }
-
   function isEmpty(obj) {
     if (obj === undefined) {
       return false;
@@ -40,19 +34,12 @@ const Matchmaking = () => {
     return Object.keys(obj).length === 0;
   }
 
-  const readyUp = () => {
-    socket.emit('ready');
-  }
-
-
-
-
-
 
 
   socket.on("winner-decided", (winner) => {
     setWinner(winner);
   })
+
   socket.on("game-start", (callback) => {
     setGameStart(true);
     console.log("this runs")
@@ -66,15 +53,6 @@ const Matchmaking = () => {
 
   console.log("match : ", match);
 
-
-
-  const biFlagColors = {
-    pink: '#D80073',
-    purple: '#9B4F96',
-    blue: '#3C6EFC',
-  };
-
-
   return (
 <>
   {!match && (
@@ -82,7 +60,7 @@ const Matchmaking = () => {
   )}
 
   {match && match.length > 0 && !gameStart && (
-    <LobbyReadyScreen readyUp = {readyUp} match={match}/>
+    <LobbyReadyScreen match={match} socket={socket}/>
   )}
 
   {match && gameStart && winner === "" && (
