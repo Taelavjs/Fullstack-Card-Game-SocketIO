@@ -8,9 +8,10 @@ const { startBothOnReady } = require('./startBothOnReady');
 const joinRoom = (io, socket) => {
     socket.on("join-room", (room, cb) => {
         const match = getActiveRoom(room);
-        if (!match.canPlayerJoin()) {
+        if (match == undefined || !match.canPlayerJoin()) {
             console.log(getClientsInRoom(io, room), " was nun");
             cb(false);
+            return;
         }
 
         try {
@@ -20,7 +21,7 @@ const joinRoom = (io, socket) => {
                 socket.handshake.auth.sessionID.toString(),
                 room);
             console.log("PLAYER COUNT IN ", room, " IS ", getClientsInRoom(io, room));
-            if (!match.canPlayerJoin()) {
+            if (match == undefined || !match.canPlayerJoin()) {
                 cb(false);
                 console.log("RETURNED FALSEY");
                 return;
