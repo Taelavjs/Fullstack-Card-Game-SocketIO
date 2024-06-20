@@ -53,13 +53,28 @@ const Matchmaking = () => {
 
   return (
 <>
-  {!match && (
-    <LobbyInput isHost={isHost} setIsHost={setIsHost} setMatch={setMatch} socket={socket}  />
-  )}
+<div className='flex flex-col md:flex-row w-screen h-screen justify-evenly'>
+    <div className="w-full md:w-1/3 mb-4 md:mb-0 hidden md:block">
+        <PlayerListSidebar match={match} />
+    </div>
+    <div className="w-full md:w-1/3 mb-4 md:mb-0">
+        {!match && (
+            <LobbyInput isHost={isHost} setIsHost={setIsHost} setMatch={setMatch} socket={socket} />
+        )}
+        {match && match.length > 0 && !gameStart && (
+            <LobbyReadyScreen match={match} socket={socket}/>
+        )}
+    </div>
+    <div className="w-full md:w-1/3 md:h-full">
+        <SettingsSidebar match={match} isHost={isHost} socket={socket} gameStart={gameStart} />
+    </div>
+</div>
 
-  {match && match.length > 0 && !gameStart && (
-    <LobbyReadyScreen match={match} socket={socket}/>
-  )}
+
+    
+
+
+
 
   {match && gameStart && winner === "" && (
     <GameScreen socket={socket} setGameStart={setGameStart} />
@@ -69,9 +84,7 @@ const Matchmaking = () => {
     <GameWinScreen winner={winner} />
   )}
 
-  <PlayerListSidebar match={match} />
 
-  <SettingsSidebar match={match} isHost={isHost} socket={socket} gameStart={gameStart} />
 
 </>
 

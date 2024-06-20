@@ -2,11 +2,14 @@
 
 const PlayerListSidebar = ({match}) => {
     return (
-        <div className="absolute left-0 top-1/2 transform -translate-y-1/2 flex flex-col items-start justify-center space-y-4 bg-gray-200 p-4 rounded-none shadow-md">
+        <div className="h-full flex flex-col justify-center items-center">
             {match?.map((playerName) => (
-            <div key={playerName} className="text-pastel-blue-dark">{playerName}</div>
+                <div key={playerName} className="flex text-2xl items-center justify-center h-20 w-full text-teal-900 border-gray-300 rounded-lg">
+                    {playerName}
+                </div>
             ))}
         </div>
+
     )
 }
 

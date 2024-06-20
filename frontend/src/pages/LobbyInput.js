@@ -81,45 +81,47 @@ const LobbyInput = ({setIsHost, setMatch, socket}) => {
     return (
     
     <>
-        <div className="relative h-screen w-full bg-gradient-to-r from-pastel-blue via-pastel-pink to-pastel-purple overflow-hidden">
-        <div className="absolute top-10 left-1/4 w-1/2 text-center">
-            <button
+<div className="relative h-full w-full bg-gradient-to-r from-pastel-blue via-pastel-pink to-pastel-purple overflow-hidden flex flex-col justify-center items-center space-y-4">
+    <div className="">
+        <button
             className="bg-pastel-pink text-white px-6 py-3 rounded-none hover:bg-pastel-pink-dark transition duration-300 shadow-lg transform hover:-translate-y-1 hover:scale-105"
             onClick={showLobbys}
-            >
+        >
             View Open Lobbies
-            </button>
-        </div>
-        <div className="absolute top-1/3 left-1/4 w-1/2 text-center">
-            <input
+        </button>
+    </div>
+    <div className="w-full flex items-center justify-center">
+        <input
             type="text"
-            className="border border-gray-300 rounded-none px-4 py-3 bg-pastel-blue-light shadow-lg"
+            className="border border-gray-300 rounded-none px-4 py-3 bg-pastel-blue-light shadow-lg w-3/4"
             onChange={onChangeHandler}
             placeholder="Lobby Name"
-            />
-            <button
-            className="bg-pastel-blue text-white px-6 py-3 ml-3 rounded-none hover:bg-pastel-blue-dark transition duration-300 shadow-lg transform hover:-translate-y-1 hover:scale-105"
+        />
+        <button
+            className="truncate bg-pastel-blue text-white px-6 py-3 ml-3 w-1/4 rounded-none hover:bg-pastel-blue-dark transition duration-300 shadow-lg transform hover:-translate-y-1 hover:scale-105"
             onClick={createLobby}
-            >
-            Create Lobby
-            </button>
-        </div>
-        <div className="absolute top-1/2 left-1/4 w-1/2 text-center">
-            <input
+        >
+            Create
+        </button>
+    </div>
+    <div className="w-full flex items-center justify-center">
+        <input
             type="text"
-            className="border border-gray-300 rounded-none px-4 py-3 bg-pastel-pink-light shadow-lg"
+            className="border border-gray-300 rounded-none px-4 py-3 bg-pastel-pink-light shadow-lg w-3/4"
             onChange={onChangeHandler}
             placeholder="Lobby Code"
-            />
-            <button
-            className="bg-pastel-purple text-white px-6 py-3 ml-3 rounded-none hover:bg-pastel-purple-dark transition duration-300 shadow-lg transform hover:-translate-y-1 hover:scale-105"
+        />
+        <button
+            className="truncate bg-pastel-purple w-1/4 text-white px-6 py-3 ml-3 rounded-none hover:bg-pastel-purple-dark transition duration-300 shadow-lg transform hover:-translate-y-1 hover:scale-105"
             onClick={joinLobby}
-            >
-            Join Lobby {socket.connected ? 'Connected' : 'Disconnected'}
-            </button>
-        </div>
-        {errText && <div className="absolute top-2/3 left-1/4 w-1/2 text-center text-pastel-red">{errText}</div>}
-        </div>
+        >
+            Join {socket.connected ? '' : 'Disconnected'}
+        </button>
+    </div>
+    {errText && <div className="absolute top-2/3 left-1/4 w-1/2 text-center text-pastel-red">{errText}</div>}
+</div>
+
+
 
 
         <div className={`fixed top-0 left-0 w-full h-screen overflow-y-auto ${showLobbyStatus ? 'slide-in' : 'slide-out'}`}>
