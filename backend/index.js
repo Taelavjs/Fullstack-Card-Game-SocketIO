@@ -97,12 +97,17 @@ let middleware;
 
           if (playerGame.state == "PLAYING") {
             console.log(socket.username);
-            for(const [key, value] of playerGame.players){
+            for(const [key, player] of playerGame.players){
               if (sessionID == key){
-                socket.emit("game-start");
-                value.sendDeck();
-                console.log("deckSending");
-                playerGame.turns();
+                socket.emit("game-start", (callback) => {
+                  console.log('Client acknowledged game start');
+                  // You can do further processing here if needed
+                  console.log(callback);
+                  if(callback) {player.sendDeck();} // Optionally, you can pass data back to the client
+                  console.log("deckSending");
+                  playerGame.turns();
+                });
+
               }
             }
           }

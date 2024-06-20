@@ -10,8 +10,7 @@ const LobbyInput = ({setIsHost, setMatch, socket}) => {
     const onChangeHandler = event => {
         setInputValue(event.target.value);
     };
-
-
+    
     const joinLobbys = (roomName) => {
         setShowLobbyStatus(false);
         socket.emit("join-room", roomName, (values) => {

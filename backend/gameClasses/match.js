@@ -114,8 +114,8 @@ class Match {
 
 
     handOutDecks() {
-        for (const [key, value] of this.players.entries()) {
-            value.gameStart();
+        for (const [key, player] of this.players.entries()) {
+            player.gameStart();
         }
         this.timerStart(20);
         this.turns();

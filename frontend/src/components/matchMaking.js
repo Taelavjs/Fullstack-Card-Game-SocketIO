@@ -7,6 +7,7 @@ import { createContext, useContext } from "react";
 import { UserContext } from '../App';
 import LobbyInput from './LobbyInput';
 import LobbyReadyScreen from './LobbyReadyScreen';
+import GameScreen from './GameScreen';
 
 const Matchmaking = () => {
 
@@ -17,7 +18,6 @@ const Matchmaking = () => {
 
   const [match, setMatch] = useState(reconnect ? reconnect.players : null);
   const [gameStart, setGameStart] = useState(reconnect.startStatus === "PLAYING" ? true : false);
-  const [deck, setDeck] = useState();
   const [winner, setWinner] = useState("");
   const [settings, setSettings] = useState(null);
 
@@ -43,24 +43,9 @@ const Matchmaking = () => {
     socket.emit('ready');
   }
 
-  socket.on("game-start", deck => {
-    setGameStart(true);
-    setDeck([]);
 
-    setDeck(deck);
 
-  })
 
-  socket.on("wrong-card-id", deck => {
-    setDeck([]);
-    setDeck(deck);
-  })
-
-  socket.on("deck-update", deck => {
-    setDeck([]);
-
-    setDeck(deck);
-  })
 
   socket.on("settings_details", (obj) => {
     console.log("THIS RAN SETTINGS UPDATE");
@@ -71,6 +56,13 @@ const Matchmaking = () => {
   socket.on("winner-decided", (winner) => {
     setWinner(winner);
   })
+  socket.on("game-start", (callback) => {
+    setGameStart(true);
+    // Acknowledge the server
+    if (callback) {
+      callback(true); // Optionally, you can pass data back to the server
+    }
+  });
 
   console.log("match : ", match);
   const [maxPlayers, setMaxPlayers] = useState('');
@@ -100,18 +92,7 @@ const Matchmaking = () => {
   )}
 
   {match && gameStart && winner === "" && (
-    <div className="relative h-screen w-full bg-gradient-to-br from-pastel-blue to-pastel-purple overflow-hidden flex justify-center items-center">
-      <div className="flex space-x-8">
-        {deck?.slice(0, 2).map((cardo, index) => (
-          <Card
-            key={cardo.id}
-            cardValue={cardo.value}
-            cardName={cardo.suit}
-            cardID={cardo.id}
-          />
-        ))}
-      </div>
-    </div>
+    <GameScreen socket={socket} setGameStart={setGameStart} />
   )}
 
   {match && gameStart && winner !== "" && (
