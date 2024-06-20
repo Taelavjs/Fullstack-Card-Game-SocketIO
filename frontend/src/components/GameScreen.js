@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 import Card from './card';
 const GameScreen = ({setGameStart, socket}) => {
@@ -7,16 +7,20 @@ const GameScreen = ({setGameStart, socket}) => {
 
 
 
-      socket.on("wrong-card-id", deck => {
-        setDeck([]);
-        setDeck(deck);
-      })
-    
-      socket.on("deck-update", deck => {
-        setDeck([]);
-    
-        setDeck(deck);
-      })
+
+      useEffect(() => {
+        socket.on("deck-update", deck => {
+          setDeck([]);
+      
+          setDeck(deck);
+        })
+
+        socket.on("wrong-card-id", deck => {
+          setDeck([]);
+          setDeck(deck);
+        })
+      }, [])
+
 
     return (
     

@@ -95,13 +95,17 @@ class Match {
 
     startMatch() {
         if (this.isAllReady()) {
-            this.io.in(this.room).emit("game-start");
-            console.log(`Both players in room ${this.room} are ready!`);
-            this.createDeck();
-            this.shuffleDeck();
-            this.setAllPlayersDeck();
-            this.state = 'PLAYING';
-            this.handOutDecks();
+            this.io.in(this.room).emit("game-start", (cb) => {
+                if(cb){
+                    console.log(`Both players in room ${this.room} are ready!`);
+                    this.createDeck();
+                    this.shuffleDeck();
+                    this.setAllPlayersDeck();
+                    this.state = 'PLAYING';
+                    this.handOutDecks();
+                }
+            });
+
         }
     }
 
