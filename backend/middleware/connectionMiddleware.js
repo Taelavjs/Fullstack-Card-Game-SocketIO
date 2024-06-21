@@ -5,6 +5,7 @@ module.exports = (sessionStore) => {
   io.use((socket, next) => {
     const username = socket.handshake.auth.username;
     const sessionID = socket.handshake.auth.sessionID;
+    console.log("MIDDLEWARE");
     if (!username && !sessionID) {
       return next(new Error("invalid username"));
     }
@@ -23,6 +24,10 @@ module.exports = (sessionStore) => {
         socket.userID = session.userID;
         socket.username = session.username;
         return next();
+      } else {
+        console.log("invalid session ID");
+        return next(new Error("invalid session ID"));
+
       }
     }
     const username = socket.handshake.auth.username;

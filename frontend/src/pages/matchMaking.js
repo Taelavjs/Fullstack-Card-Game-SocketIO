@@ -10,7 +10,6 @@ import GameWinScreen from './GameWinScreen';
 import PlayerListSidebar from './PlayerListSidebar';
 import SettingsSidebar from './SettingsSidebar';
 const Matchmaking = () => {
-
   const reconnect = useContext(UserContext);
   console.log("Using context, the object's : ", reconnect);
   const [isHost, setIsHost] = useState(reconnect.isHost !== undefined ? reconnect.isHost : false);
@@ -33,7 +32,7 @@ const Matchmaking = () => {
     }
     return Object.keys(obj).length === 0;
   }
-  
+
   socket.on("winner-decided", (winner) => {
     setWinner(winner);
   })
@@ -41,52 +40,42 @@ const Matchmaking = () => {
   socket.on("game-start", (callback) => {
     setGameStart(true);
     console.log("this runs")
-  // Acknowledge the server
-  if (callback) {
-    setTimeout(() => {
-      callback(true); // Optionally, you can pass data back to the server
-      console.log("then this runs");
-    }, 100)} // Delay in milliseconds
+    // Acknowledge the server
+    if (callback) {
+      setTimeout(() => {
+        callback(true); // Optionally, you can pass data back to the server
+        console.log("then this runs");
+      }, 100)
+    } // Delay in milliseconds
   });
 
   console.log("match : ", match);
 
   return (
-<>
-<div className='flex flex-col md:flex-row w-screen h-screen justify-evenly'>
-    <div className="w-full md:w-1/3 mb-4 md:mb-0 hidden md:block">
-        <PlayerListSidebar match={match} />
-    </div>
-    <div className="w-full md:w-1/3 mb-4 md:mb-0">
-        {!match && (
+    <>
+      <div className='flex flex-col md:flex-row w-screen h-screen justify-evenly'>
+        <div className="w-full md:w-1/3 mb-4 md:mb-0 hidden md:block">
+          <PlayerListSidebar match={match} />
+        </div>
+        <div className="w-full md:w-1/3 mb-4 md:mb-0">
+          {!match && (
             <LobbyInput isHost={isHost} setIsHost={setIsHost} setMatch={setMatch} socket={socket} />
-        )}
-        {match && match.length > 0 && !gameStart && (
-            <LobbyReadyScreen match={match} socket={socket}/>
-        )}
-    </div>
-    <div className="w-full md:w-1/3 md:h-full">
-        <SettingsSidebar match={match} isHost={isHost} socket={socket} gameStart={gameStart} />
-    </div>
-</div>
-
-
-    
-
-
-
-
-  {match && gameStart && winner === "" && (
-    <GameScreen socket={socket} setGameStart={setGameStart} />
-  )}
-
-  {match && gameStart && winner !== "" && (
-    <GameWinScreen winner={winner} />
-  )}
-
-
-
-</>
+          )}
+          {match && match.length > 0 && !gameStart && (
+            <LobbyReadyScreen match={match} socket={socket} />
+          )}
+          {match && gameStart && winner === "" && (
+            <GameScreen socket={socket} setGameStart={setGameStart} />
+          )}
+        </div>
+        <div className="w-full md:w-1/3 md:h-full">
+          <SettingsSidebar match={match} isHost={isHost} socket={socket} gameStart={gameStart} />
+        </div>
+      </div>
+      {match && gameStart && winner !== "" && (
+        <GameWinScreen winner={winner} />
+      )}
+    </>
 
   );
 }

@@ -1,5 +1,8 @@
 const onConnection = (sessionStore, socket) => {
+  console.log("returned false lmao");
+
   if (sessionStore.get(socket.handshake.auth.sessionID.toString())) {
+    console.log(sessionStore.get(socket.handshake.auth.sessionID.toString()));
     let playerRetrievedRecord = sessionStore.get(socket.handshake.auth.sessionID.toString());
     playerRetrievedRecord.socketId = socket.id;
     return true;
@@ -12,6 +15,7 @@ const onConnection = (sessionStore, socket) => {
     'activeRoom': null,
   }
   );
+  console.log("test test test");
   return false;
 }
 

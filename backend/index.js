@@ -68,7 +68,9 @@ let middleware;
         );
 
         if (activeRoom == null) {
-          console.log("no rooms ");
+          console.log("no rooms at all");
+
+          
         } else {
           socket.join(activeRoom);
           console.log("socket has rejoined ", activeRoom);
