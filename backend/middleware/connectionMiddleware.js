@@ -18,7 +18,7 @@ module.exports = (sessionStore) => {
     const sessionID = socket.handshake.auth.sessionID;
     if (sessionID) {
       // find existing session
-      const session = sessionStore.get(sessionID);
+      const session = sessionStore.get(String(sessionID));
       if (session) {
         socket.sessionID = sessionID;
         socket.userID = session.userID;
@@ -26,6 +26,10 @@ module.exports = (sessionStore) => {
         return next();
       } else {
         console.log("invalid session ID");
+        console.log("SESSION ID : ", "" + sessionID);
+        console.log(sessionStore);
+        console.log(session);
+        
         return next(new Error("invalid session ID"));
 
       }
