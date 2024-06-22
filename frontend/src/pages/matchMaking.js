@@ -24,6 +24,22 @@ const Matchmaking = () => {
       setMatch(reconnect.players);
       setIsHost(reconnect.isHost);
     }
+
+    socket.on("winner-decided", (winner) => {
+      setWinner(winner);
+    })
+  
+    socket.on("game-start", (callback) => {
+      setGameStart(true);
+      console.log("this runs")
+      // Acknowledge the server
+      if (callback) {
+        setTimeout(() => {
+          callback(true); // Optionally, you can pass data back to the server
+          console.log("then this runs");
+        }, 100)
+      } // Delay in milliseconds
+    });
   }, [reconnect])
 
   function isEmpty(obj) {
@@ -33,21 +49,7 @@ const Matchmaking = () => {
     return Object.keys(obj).length === 0;
   }
 
-  socket.on("winner-decided", (winner) => {
-    setWinner(winner);
-  })
 
-  socket.on("game-start", (callback) => {
-    setGameStart(true);
-    console.log("this runs")
-    // Acknowledge the server
-    if (callback) {
-      setTimeout(() => {
-        callback(true); // Optionally, you can pass data back to the server
-        console.log("then this runs");
-      }, 100)
-    } // Delay in milliseconds
-  });
 
   console.log("match : ", match);
 

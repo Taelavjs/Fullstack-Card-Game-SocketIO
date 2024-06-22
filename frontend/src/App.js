@@ -26,10 +26,11 @@ function App() {
   useEffect(() => {
     socket.on('connect', function () {
       setIsConnected(true);
-      setTimeout(() => {
-        // close the low-level connection and trigger a reconnection
-        socket.io.engine.close();
-      }, Math.random() * 5000 + 1000);
+      setReconnectObjectState({});
+      // setTimeout(() => {
+      //   // close the low-level connection and trigger a reconnection
+      //   socket.io.engine.close();
+      // }, Math.random() * 5000 + 1000);
 
       console.log(socket);
       socket.on("reconnected-room", (roomInformationObj) => {
@@ -88,9 +89,10 @@ function App() {
         </div>      
       }
       {isLostSession && sessionID == null &&
-        <div className='absolute w-screen top-0 left-0 h-1.5 bg-yellow-200 text-yellow-800 border border-yellow-400 px-2 py-1 rounded-lg shadow-sm'>
-  ERR
-</div>      }
+        <div className='absolute top-0 left-0 transform w-screen h-5 bg-red-500 text-white text-center z-50 flex items-center justify-center'>
+          SERVER RESTARTED, APOLOGIES
+        </div>      
+      }
       {userID == null && sessionID == null && <UsernameComponent sessionId={sessionID} setSessionId={setSessionId} userID={userID} setUserID={setUserID} />}
       <UserContext.Provider value={reconnectObjectState}>
         <MatchMaking />

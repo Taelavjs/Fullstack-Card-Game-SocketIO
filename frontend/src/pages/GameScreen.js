@@ -3,19 +3,22 @@ import { useEffect, useState } from "react";
 import Card from '../components/card';
 const GameScreen = ({setGameStart, socket}) => {
     const [deck, setDeck] = useState([]);
+    const [selectedCard, setSelectedCard] = useState(null);
 
       useEffect(() => {
         socket.on("deck-update", deck => {
-          setDeck([]);
-      
+          setSelectedCard(null);
           setDeck(deck);
         })
 
         socket.on("wrong-card-id", deck => {
-          setDeck([]);
+          setSelectedCard(null);
           setDeck(deck);
         })
       }, [socket])
+
+
+      console.log("selected : ", selectedCard);
 
 
     return (
@@ -28,6 +31,8 @@ const GameScreen = ({setGameStart, socket}) => {
                     cardValue={cardo.value}
                     cardName={cardo.suit}
                     cardID={cardo.id}
+                    setSelectedCard={setSelectedCard}
+                    isSelected={cardo.id === selectedCard}
                 />
                 ))}
             </div>

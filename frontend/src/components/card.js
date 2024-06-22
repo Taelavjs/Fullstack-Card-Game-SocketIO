@@ -1,13 +1,18 @@
 import { useState } from 'react';
 import socket from '../socket';
 
-const Card = ({ cardValue, cardName, cardID }) => {
-  const [isClicked, setIsClicked] = useState(false);
+const Card = ({ cardValue, cardName, cardID, setSelectedCard, isSelected }) => {
 
   const selectCard = () => {
-    setIsClicked(true); // Set isClicked to true when the card is clicked
-    socket.emit('chosen-card', cardID);
-    console.log(cardID);
+    socket.emit('chosen-card', cardID, cb => {
+      setSelectedCard(cardID); // Set isClicked to true when the card is clicked
+      console.log(cardID);
+
+      if (!cb) {
+        setSelectedCard(null); // Set isClicked to true when the card is clicked
+        return;
+      }
+    });
   };
 
   // Pastel colors inspired by the bisexual flag
@@ -20,7 +25,7 @@ const Card = ({ cardValue, cardName, cardID }) => {
   return (
     <div
       onClick={selectCard}
-      className={`card-container border border-gray-300 w-48 h-72 flex flex-col justify-center items-center space-y-4 ${isClicked ? 'animate-pulse' : ''}`}
+      className={`card-container border border-gray-300 w-48 h-72 flex flex-col justify-center items-center space-y-4 ${isSelected ? 'animate-pulse' : ''}`}
       style={{
         backgroundImage: `linear-gradient(to bottom right, ${pastelColors.pink}, ${pastelColors.purple}, ${pastelColors.blue})`,
         backgroundSize: '100% 100%',

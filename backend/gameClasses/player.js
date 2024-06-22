@@ -31,13 +31,20 @@ class Player {
         return io.to(this.socketID);
     }
 
+    /**
+     * Sends out the deck to
+     */
     gameStart = () => {
-        let io = require('../socket').getio();
         this.sendDeck();
-
     }
 
-
+    /**
+     * Triggered every turn of the player
+     * Rejects if no card with said ID is found
+     * Resolves and returns the selected card if found in players deck
+     * Listens once to disconnect, in which case it will reject with an error
+     * Listens once to player input, which will reset if the card is not found
+     */
     async chosenCardListener() {
         return new Promise((resolve, reject) => {
             if (this.selectedCard !== null) {
@@ -46,19 +53,26 @@ class Player {
             }
 
             let io = require('../socket').getio();
-            io.sockets.sockets.get(this.socketID).once("disconnect", (reason) => {
-                reject("card not exist");
-            });
-
-            io.sockets.sockets.get(this.socketID).once("chosen-card", (arg) => {
-
-                let foundCard = this.checkCardExists(arg);
-                if (typeof foundCard === 'object') {
-                    resolve(foundCard);
-                } else {
-                    reject(new Error(foundCard));
-                }
-            });
+            try {
+                io.sockets.sockets.get(this.socketID).once("disconnect", (reason) => {
+                    reject("card not exist");
+                });
+    
+                io.sockets.sockets.get(this.socketID).once("chosen-card", (arg, cb) => {
+    
+                    let foundCard = this.checkCardExists(arg);
+                    if (typeof foundCard === 'object') {
+                        cb(true)
+                        resolve(foundCard);
+                    } else {
+                        cb(false);
+                        reject(new Error(foundCard));
+                    }
+                });
+            } catch (error) {
+                console.log("ERR : SOCKET ID IS OLD : ", this.socketID);
+            }
+ 
         });
     }
 

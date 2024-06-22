@@ -104,9 +104,10 @@ let middleware;
                 socket.emit("game-start", (callback) => {
                   console.log('Client acknowledged game start');
                   // You can do further processing here if needed
-                  console.log(callback);
+                  console.log("callback : ", callback);
                   if(callback) {player.sendDeck();} // Optionally, you can pass data back to the client
                   console.log("deckSending");
+                  
                   playerGame.turns();
                 });
 

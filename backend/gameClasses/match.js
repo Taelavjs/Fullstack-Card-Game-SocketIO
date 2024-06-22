@@ -28,6 +28,7 @@ class Match {
         this.historyRound = [];
         this.minNumPlayers = minNumPlayers;
         this.maxPlayerCount = maxPlayerCount;
+        this.winner = null;
     }
 
     addNewPlayer () {
@@ -129,7 +130,7 @@ class Match {
         console.log("checking 1223 123");
         console.log(this.players.values());
         for (const [key, value] of this.players.entries()) {
-            if (value.noCardsRemaining) return true;
+            if (value.noCardsRemaining && value.selectedCard === null) return true;
         }
         return false;
     }
@@ -241,9 +242,9 @@ class Match {
     }
 
     gameComplete() {
-        var winner = "host";
+        this.winner = "host";
         for (const [key, value] of this.players.entries()) {
-            value.sendWinnerToPLayer(winner);
+            value.sendWinnerToPLayer(this.winner);
         }
         let roomStore = require('../utility/roomStore').removeActiveRoom(this.room);
         const sessionHandler = require("../gameClasses/handlers/setupSessionStore");
