@@ -30,11 +30,12 @@ const joinRoom = (io, socket) => {
             let playerUsernames = [];
             match.players.forEach((value, key) => {
                 playerUsernames.push(value.username);
+                value.resetReadyStatus();
                 })
                 
 
             io.in(room).emit("player-joined", playerUsernames );
-
+            
             cb(playerUsernames);
 
             startBothOnReady(socket, newPlayer, room);

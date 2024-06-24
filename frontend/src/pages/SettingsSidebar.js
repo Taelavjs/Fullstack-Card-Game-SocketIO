@@ -4,6 +4,7 @@ const SettingsSidebar = ({ isHost, match, gameStart, socket }) => {
   const [maxPlayers, setMaxPlayers] = useState('');
   const [minPlayers, setMinPlayers] = useState('');
   const [settings, setSettings] = useState(null);
+  const [errorText, setErrorText] = useState("");
 
   useEffect(() => {
     const handleSettingsUpdate = (obj) => {
@@ -18,8 +19,11 @@ const SettingsSidebar = ({ isHost, match, gameStart, socket }) => {
   }, []);
 
   const handleCustomSettings = () => {
+    console.log("BUTTON PRESSED");
     socket.emit("match-settings", { maxPlayers, minPlayers }, (cb) => {
       console.log("Settings updated? ", cb);
+      if(cb) setErrorText("Settings Updated Successfully");
+      if(!cb) setErrorText("Invalid Settings");
     });
   };
 
@@ -72,6 +76,10 @@ const SettingsSidebar = ({ isHost, match, gameStart, socket }) => {
       <div className="text-gray-700">Timer:</div>
       <div className="text-blue-500">{settings?.timer}</div>
     </div>
+
+    {errorText !== "" && <div className="mt-2">
+      {errorText}
+    </div>}
   </div>
 )}
 

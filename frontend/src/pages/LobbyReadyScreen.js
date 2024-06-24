@@ -1,15 +1,17 @@
 import { useEffect } from "react";
 
 
-const LobbyReadyScreen = ({ match, socket }) => {
+const LobbyReadyScreen = ({ match, socket, readyStatus, setReadyStatus }) => {
+    
     const readyUp = () => {
-        socket.emit('ready');
+        socket.emit('ready', cb => {
+            if(cb) setReadyStatus(true);
+            if(!cb) console.log("error");
+        });
     }
 
     useEffect(() => {
-        return () => {
-            socket.off("player-joined");
-        }
+
     })
 
     return (
@@ -27,7 +29,7 @@ const LobbyReadyScreen = ({ match, socket }) => {
                     ))}
                     <button
                         onClick={readyUp}
-                        className="bg-pastel-purple my-4 text-white px-6 py-3 rounded-none hover:bg-pastel-purple-dark transition duration-300 shadow-lg transform hover:-translate-y-1 hover:scale-105 mt-4"
+                        className={`${readyStatus ? "disabled" : "" } bg-pastel-purple my-4 text-white px-6 py-3 rounded-none hover:bg-pastel-purple-dark transition duration-300 shadow-lg transform hover:-translate-y-1 hover:scale-105 mt-4`}
                     >
                         Ready?
                     </button>

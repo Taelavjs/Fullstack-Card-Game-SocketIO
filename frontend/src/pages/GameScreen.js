@@ -26,6 +26,9 @@ const GameScreen = ({setGameStart, socket}) => {
         }
       },  [])
 
+      if(deck) socket.off("player-joined");
+
+
 
       console.log("selected : ", selectedCard);
 

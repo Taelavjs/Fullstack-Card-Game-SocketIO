@@ -1,7 +1,7 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import LobbySelector from "./lobbySelector";
-const LobbyInput = ({setIsHost, setMatch, socket}) => {
+const LobbyInput = ({setIsHost, setMatch, socket, setReadyStatus}) => {
     const [errText, setErrorText] = useState("");
     const [inputValue, setInputValue] = useState("");
     const [listLobbys, setListLobbys] = useState([]);
@@ -25,6 +25,8 @@ const LobbyInput = ({setIsHost, setMatch, socket}) => {
     
           socket.on("player-joined", (players) => {
             setMatch(players);
+            setReadyStatus(false);
+
             console.log("PLAYERS IN ROOM ", players);
           })
         })
@@ -40,6 +42,7 @@ const LobbyInput = ({setIsHost, setMatch, socket}) => {
     
           socket.on("player-joined", (players) => {
             setMatch(players);
+            setReadyStatus(false);
             console.log("PLAYERS IN ROOM ", players);
           })
         })
@@ -71,6 +74,7 @@ const LobbyInput = ({setIsHost, setMatch, socket}) => {
     
           socket.on("player-joined", (players) => {
             setMatch(players);
+            setReadyStatus(false);
             console.log("PLAYERS IN ROOM ", players);
           })
     

@@ -13,11 +13,12 @@ const Matchmaking = () => {
   const reconnect = useContext(UserContext);
   console.log("Using context, the object's : ", reconnect);
   const [isHost, setIsHost] = useState(reconnect.isHost !== undefined ? reconnect.isHost : false);
-  console.log("isHost : ", isHost);
-
+  
   const [match, setMatch] = useState(reconnect ? reconnect.players : null);
   const [gameStart, setGameStart] = useState(reconnect.startStatus === "PLAYING" ? true : false);
   const [winner, setWinner] = useState("");
+  const [readyStatus, setReadyStatus] = useState(false);
+  console.log("ready status : ", readyStatus);
 
   useEffect(() => {
     if (!isEmpty(reconnect)) {
@@ -67,10 +68,10 @@ const Matchmaking = () => {
         </div>
         <div className="w-full md:w-1/3 mb-4 md:mb-0">
           {!match && (
-            <LobbyInput isHost={isHost} setIsHost={setIsHost} setMatch={setMatch} socket={socket} />
+            <LobbyInput isHost={isHost} setIsHost={setIsHost} setMatch={setMatch} socket={socket} setReadyStatus={setReadyStatus}/>
           )}
           {match && match.length > 0 && !gameStart && (
-            <LobbyReadyScreen match={match} socket={socket} />
+            <LobbyReadyScreen match={match} socket={socket} readyStatus={readyStatus} setReadyStatus={setReadyStatus} />
           )}
           {match && gameStart && winner === "" && (
             <GameScreen socket={socket} setGameStart={setGameStart} />

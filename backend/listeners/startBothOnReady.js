@@ -1,6 +1,7 @@
 const { getRoomStore } = require('../utility/roomStore');
 const startBothOnReady = (socket, playerObject, room) => {
-    socket.on("ready", () => {
+    socket.on("ready", cb => {
+        cb(true);
         const roomStore = getRoomStore();
         const match = roomStore.get(room);
         console.log(match.players);
@@ -11,6 +12,8 @@ const startBothOnReady = (socket, playerObject, room) => {
         if (match.isAllReady()) {
             match.startMatch();
         }
+
+        
     });
 };
 

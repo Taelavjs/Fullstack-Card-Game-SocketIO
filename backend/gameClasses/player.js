@@ -117,6 +117,10 @@ class Player {
         let deckToGivePlayer = this.getAccessiblePlayersCards();
         io.to(this.socketID).emit("deck-update", deckToGivePlayer);
     }
+
+    resetReadyStatus(){
+        this.readyStatus = false;
+    }
     
     getAccessiblePlayersCards(){
         let array2;

@@ -38,10 +38,15 @@ class Match {
 
     updateSettings(socket) {
         this.settingsSocket = socket;
-        if (socket.sessionID !== this.host.sessionID) return;
+        console.log(socket.handshake.auth.sessionID, this.host.sessionID);
+        if (parseInt(socket.handshake.auth.sessionID) !== parseInt(this.host.sessionID)) return;
     
         socket.on("match-settings", ({ maxPlayers, minPlayers }, cb) => {
-            if (!(maxPlayers <= 15 && minPlayers >= 2 && maxPlayers >= minPlayers && maxPlayers >= this.players.size && minPlayers >= this.players.size && maxPlayers >= minPlayers)) {
+            console.log(maxPlayers, minPlayers);
+            if (!(maxPlayers <= 15 && minPlayers <= 15 && 
+                maxPlayers >= 2 && minPlayers >= 2 && 
+                maxPlayers >= minPlayers && 
+                maxPlayers >= this.players.size)) {
                 cb(false);
                 return; 
             }

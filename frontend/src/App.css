@@ -14,3 +14,8 @@
 .animate-pulse {
     animation: pulse 1s infinite; /* Adjust the animation duration and timing as needed */
 }
+
+.disabled{
+    pointer-events: none;
+    opacity: 50%;
+  }
