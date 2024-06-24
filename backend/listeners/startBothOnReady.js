@@ -5,7 +5,6 @@ const startBothOnReady = (socket, playerObject, room) => {
         const match = roomStore.get(room);
         console.log(match.players);
         if(match.checkMinNumToStart()) {
-            console.log("CHECK MIN AAAA");
             return;
         }
         match.players.get(playerObject.sessionID).setReadyStatus(true);

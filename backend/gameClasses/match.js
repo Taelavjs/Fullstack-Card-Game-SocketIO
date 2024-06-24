@@ -29,6 +29,7 @@ class Match {
         this.minNumPlayers = minNumPlayers;
         this.maxPlayerCount = maxPlayerCount;
         this.winner = null;
+        this.settingsSocket = null;
     }
 
     addNewPlayer () {
@@ -36,6 +37,7 @@ class Match {
     }
 
     updateSettings(socket) {
+        this.settingsSocket = socket;
         if (socket.sessionID !== this.host.sessionID) return;
     
         socket.on("match-settings", ({ maxPlayers, minPlayers }, cb) => {
@@ -166,6 +168,7 @@ class Match {
                 }
                 for (const [key, value] of this.players.entries()) {
                     console.log(key, value, highestCard);
+                    value.removeCard();
                     if (key == highestCardPlayer) {
                         // WINNER PLAYER
                         console.log("cards to add : ", cards);

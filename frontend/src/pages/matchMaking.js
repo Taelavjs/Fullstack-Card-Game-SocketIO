@@ -40,6 +40,12 @@ const Matchmaking = () => {
         }, 100)
       } // Delay in milliseconds
     });
+
+
+    return () => {
+      socket.off("game-start");
+      socket.off("winner-decided");
+    }
   }, [reconnect])
 
   function isEmpty(obj) {

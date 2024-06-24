@@ -78,12 +78,13 @@ function App() {
       socket.off('connect');
       socket.off('reconnected-room');
       socket.off('session');
+      socket.off("connection-error");
     };
   }, []);
 
   return (
     <>
-      {!isConnected && sessionID !== null && 
+      {!isConnected && sessionID !== null && !(userID == null && sessionID == null) &&
         <div className='absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-screen h-5 bg-red-500 text-white text-center z-50 flex items-center justify-center'>
           Connection Err
         </div>      
@@ -93,9 +94,10 @@ function App() {
           SERVER RESTARTED, APOLOGIES
         </div>      
       }
-      {userID == null && sessionID == null && <UsernameComponent sessionId={sessionID} setSessionId={setSessionId} userID={userID} setUserID={setUserID} />}
+      {userID == null && sessionID == null && 
+      <UsernameComponent sessionId={sessionID} setSessionId={setSessionId} userID={userID} setUserID={setUserID} />}
       <UserContext.Provider value={reconnectObjectState}>
-        <MatchMaking />
+      {userID != null && sessionID != null && <MatchMaking /> }
       </UserContext.Provider>
       {sessionID != null && ( // Show loading overlay when in loading state
         <div className={`w-screen h-screen absolute top-0 left-0 flex items-center justify-center bg-gradient-to-r from-red-500 via-yellow-500 to-purple-500 transition-opacity duration-1000 ${isLoading ? 'pointer-events-auto' : 'pointer-events-none'} ${isLoading ? 'opacity-100' : 'opacity-0'}`}>

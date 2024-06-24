@@ -6,6 +6,10 @@ const GameScreen = ({setGameStart, socket}) => {
     const [selectedCard, setSelectedCard] = useState(null);
 
       useEffect(() => {
+        socket.emit("req-deck", (deck) => {
+          setDeck(deck);
+        })
+
         socket.on("deck-update", deck => {
           setSelectedCard(null);
           setDeck(deck);
@@ -15,7 +19,12 @@ const GameScreen = ({setGameStart, socket}) => {
           setSelectedCard(null);
           setDeck(deck);
         })
-      }, [socket])
+        return () => {
+          socket.off("wrong-card-id");
+          socket.off("deck-update");
+          socket.off("wrong-card-id");
+        }
+      },  [])
 
 
       console.log("selected : ", selectedCard);

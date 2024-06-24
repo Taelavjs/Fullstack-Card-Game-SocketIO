@@ -60,7 +60,6 @@ let middleware;
 
       if (onConnection(sessionStore, socket)) {
         //RECONNECTED WITH SESSION ID
-        console.log("welcome back!");
         let sessionID = socket.handshake.auth.sessionID.toString();
         activeRoom = sessionHolder.getPreviousPlayerRooms(
           sessionID,
@@ -68,12 +67,10 @@ let middleware;
         );
 
         if (activeRoom == null) {
-          console.log("no rooms at all");
 
           
         } else {
           socket.join(activeRoom);
-          console.log("socket has rejoined ", activeRoom);
 
           let playerGame = require('./utility/roomStore.js').getActiveRoom(activeRoom);
           let playersUsernames = [];
@@ -98,16 +95,11 @@ let middleware;
 
 
           if (playerGame.state == "PLAYING") {
-            console.log(socket.username);
             for(const [key, player] of playerGame.players){
               if (sessionID == key){
                 socket.emit("game-start", (callback) => {
-                  console.log('Client acknowledged game start');
                   // You can do further processing here if needed
-                  console.log("callback : ", callback);
                   if(callback) {player.sendDeck();} // Optionally, you can pass data back to the client
-                  console.log("deckSending");
-                  
                   playerGame.turns();
                 });
 

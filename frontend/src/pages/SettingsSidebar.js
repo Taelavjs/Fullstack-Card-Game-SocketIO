@@ -13,9 +13,9 @@ const SettingsSidebar = ({ isHost, match, gameStart, socket }) => {
     socket.on("settings_details", handleSettingsUpdate);
 
     return () => {
-      socket.off("settings_details", handleSettingsUpdate);
+      socket.off("settings_details");
     };
-  }, [socket]);
+  }, []);
 
   const handleCustomSettings = () => {
     socket.emit("match-settings", { maxPlayers, minPlayers }, (cb) => {

@@ -78,17 +78,33 @@ class Player {
 
     checkCardExists(cardID) {
         if(this.selectedCard) { return this.selectedCard;}
-
-        for (let index = 0; index < this.deck.length; index++) {
-            const card = this.deck[index];
+        let cardsToCheckAgainst = this.getAccessiblePlayersCards()
+        for (let index = 0; index < cardsToCheckAgainst.length; index++) {
+            const card = cardsToCheckAgainst[index];
 
             if (card.id === parseInt(cardID)) {
                 this.selectedCard = card;
-                this.deck.splice(index, 1);
                 return card;
             }
         }
         return "card not exist";
+    }
+
+    requestDeck(){
+        let io = require('../socket').getio();
+        io.sockets.sockets.get(this.socketID).once("req-deck", (arg, ack) => {
+            ack(this.getAccessiblePlayersCards());
+        })
+    }
+
+    removeCard(){
+
+        for (let index = 0; index < this.deck.length; index++) {
+            const card = this.deck[index];
+            if (card.id === this.selectedCard.id) {
+                this.deck.splice(index, 1);                
+            }
+        }
     }
 
     resetChosenCard() {
@@ -98,6 +114,11 @@ class Player {
 
     sendDeck() {
         let io = require('../socket').getio();
+        let deckToGivePlayer = this.getAccessiblePlayersCards();
+        io.to(this.socketID).emit("deck-update", deckToGivePlayer);
+    }
+    
+    getAccessiblePlayersCards(){
         let array2;
         
         if (this.deck.length > 1) {
@@ -110,9 +131,9 @@ class Player {
         }
     
         let deckToGivePlayer = array2.map(i => this.deck[i]);
-        io.to(this.socketID).emit("deck-update", deckToGivePlayer);
+        return deckToGivePlayer;
     }
-    
+
 
     setReadyStatus(status) {
         this.readyStatus = status;

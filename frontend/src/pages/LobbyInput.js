@@ -1,12 +1,12 @@
 
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import LobbySelector from "./lobbySelector";
 const LobbyInput = ({setIsHost, setMatch, socket}) => {
     const [errText, setErrorText] = useState("");
     const [inputValue, setInputValue] = useState("");
     const [listLobbys, setListLobbys] = useState([]);
     const [showLobbyStatus, setShowLobbyStatus] = useState(false);
-
+    
     const onChangeHandler = event => {
         setInputValue(event.target.value);
     };
