@@ -1,14 +1,20 @@
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { useState } from "react";
 import LobbySelector from "./lobbySelector";
 const LobbyInput = ({setIsHost, setMatch, socket, setReadyStatus}) => {
     const [errText, setErrorText] = useState("");
-    const [inputValue, setInputValue] = useState("");
+    const [createLobbyInput, setCreateLobbyInput] = useState("");
+    const [joinLobbyInput, setJoinLobbyInput] = useState("");
+    
     const [listLobbys, setListLobbys] = useState([]);
     const [showLobbyStatus, setShowLobbyStatus] = useState(false);
     
-    const onChangeHandler = event => {
-        setInputValue(event.target.value);
+    const onChangeJoin = event => {
+        setJoinLobbyInput(event.target.value);
+    };
+
+    const onChangeCreate = event => {
+      setCreateLobbyInput(event.target.value);
     };
     
     const joinLobbys = (roomName) => {
@@ -33,7 +39,7 @@ const LobbyInput = ({setIsHost, setMatch, socket, setReadyStatus}) => {
       }
 
     const joinLobby = (e) => {
-        socket.emit("join-room", inputValue, (values) => {
+        socket.emit("join-room", joinLobbyInput, (values) => {
           console.log("JOINGED ROOM RETURNED : ", values);
     
           if (values !== false) {
@@ -62,13 +68,13 @@ const LobbyInput = ({setIsHost, setMatch, socket, setReadyStatus}) => {
 
     const createLobby = (e) => {
         e.preventDefault();
-        socket.emit("create-room", inputValue, cb => {
+        socket.emit("create-room", createLobbyInput, cb => {
           if (!cb) {
             console.log("CREATED ROOM INSUCCESSFULLY");
             setErrorText("Invalid Lobby Id");
             return;
           }
-          console.log("CREATED ROOM ", inputValue);
+          console.log("CREATED ROOM ", createLobbyInput);
           setIsHost(true);
           setMatch(cb);
     
@@ -97,8 +103,8 @@ const LobbyInput = ({setIsHost, setMatch, socket, setReadyStatus}) => {
     <div className="w-full h-min flex flex-col items-center justify-evenly">
         <input
             type="text"
-            className="border min-w-full border-gray-300 rounded-none px-4 py-3 bg-pastel-blue-light shadow-lg w-3/4"
-            onChange={onChangeHandler}
+            className=" border min-w-full border-gray-300 rounded-none px-4 py-3 bg-pastel-blue-light shadow-lg w-3/4"
+            onChange={onChangeCreate}
             placeholder="Lobby Name"
         />
         <button
@@ -112,7 +118,7 @@ const LobbyInput = ({setIsHost, setMatch, socket, setReadyStatus}) => {
         <input
             type="text"
             className="border min-w-full border-gray-300 rounded-none px-4 py-3 bg-pastel-pink-light shadow-lg w-3/4"
-            onChange={onChangeHandler}
+            onChange={onChangeJoin}
             placeholder="Lobby Code"
         />
         <button
@@ -128,8 +134,8 @@ const LobbyInput = ({setIsHost, setMatch, socket, setReadyStatus}) => {
 
 
 
-        <div className={`fixed top-0 left-0 right-0 mr-auto ml-auto self-center w-4/6 ${showLobbyStatus ? 'slide-in' : 'slide-out'}`}>
-        <div className="w-full ">
+        <div className={`fixed top-0 left-0 mr-auto ml-auto self-center w-4/6 ${showLobbyStatus ? 'slide-in' : 'slide-out'}`}>
+        <div className="w-screen h-screen" onClick={showLobbys}>
         <div className="gridList">
           <div className="cellList heading">Lobby Name</div>
           <div className="cellList heading">Host Name</div>

@@ -58,7 +58,7 @@ html, body, #app, #app>div {
 /* Slide-out animation */
 .slide-out {
   animation: slideOut 0.3s ease-in forwards;
-  z-index: -1; /* Hide lobby selector off-screen */
+   /* Hide lobby selector off-screen */
 }
 
 @keyframes slideOut {

@@ -3,7 +3,6 @@ import UsernameComponent from './components/usernameComponent';
 import MatchMaking from './pages/matchMaking';
 import socket from './socket';
 import { createContext } from "react";
-import ReactDOM from "react-dom/client";
 
 export const UserContext = createContext({});
 

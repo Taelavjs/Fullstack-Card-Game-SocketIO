@@ -1,6 +1,4 @@
 import './../App.css';
-import { useEffect, useState } from 'react';
-import socket from '../socket';
 
 const LobbySelector = ({ roomInfo, setRoomName }) => {
   console.log(roomInfo);

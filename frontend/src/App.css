@@ -1,66 +1,87 @@
 @tailwind base;
+
 @keyframes pulse {
-    0% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(1.1);
-    }
-    100% {
-        transform: scale(1);
-    }
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 .animate-pulse {
-    animation: pulse 1s infinite; /* Adjust the animation duration and timing as needed */
+  animation: pulse 1s infinite; /* Adjust the animation duration and timing as needed */
 }
 
-.disabled{
-    pointer-events: none;
-    opacity: 50%;
+.disabled {
+  pointer-events: none;
+  opacity: 50%;
+}
+
+.gridList {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* Maintain 3 columns for all screens */
+  width: 100%;
+  margin: 0 auto;
+  height: min-content;
+  max-height: 50vh;
+  overflow-y: auto;
+
+  /* Remove custom scrollbar styles and utilize Tailwind utilities for future customization */
+  /* scrollbar-color: red orange; */
+  /* scrollbar-width: thin; */
+}
+
+.cellList {
+  font-size: 1.75rem; /* Use rem for better responsiveness */
+  border-bottom: 2px solid black;
+  background: rgba(111, 133, 90, 0.2); /* Use rgba for consistent background opacity */
+  padding: 5%;
+  text-align: center;
+  align-items: center;
+  gap: 0;
+  z-index: -1;
+  backdrop-filter: blur(3px);
+}
+
+.cellList.heading {
+  font-size: calc(1.2rem + 1.1vw); /* Use rem for better responsiveness */
+  border-bottom: 6px solid rgb(231, 255, 251);
+  display: flex;
+  z-index: 0;
+justify-content: center;
+align-items: center;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  height: 5rem;
+  position: sticky;
+  top: 0;
+  background-color: rgb(193, 216, 216);
+}
+
+@media (max-width: 750px) {
+  .cellList.heading {
+    display: none;
   }
 
+  .cellList {
+    font-size: 1.75rem;
+    border-bottom: 2px solid black;
+    background: rgba(205, 175, 208, 0.2); /* Use rgba for consistent background opacity */
+    padding: 1.5rem;
+    width: 100%;
+    margin: 0;
+    padding:1.25ch 0 ;
+    
+  }
 
   .gridList {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    width: 100%;
-    margin: 0 auto;
-    max-height: fit-content;
-    height: -moz-max-content;
-    min-height: 10vh;
-    max-height: 25vh;
-    overflow-y:scroll;
-    
-    scrollbar-color: red orange;
-    scrollbar-width: thin;
-  
-    text-align: center;
-    justify-content: center;
-    align-items: center;
-    gap: 0;
-    border: 2px solid red;
+    max-height: 65vh; /* Limit height to 75vh on mobile */
+    justify-content: flex-start;
+    width: 100vw;
   }
-  
-  .cellList {
-    font-size: 1.75ch;
-    border-bottom: 2px solid black;
-    height: fit-content;
-    background: #cdafd0ca;
-    padding: 5%;
-    text-align: center;
-    justify-content: center;
-    align-items: center;
-   }
-
-   .cellList.heading {
-    font-size:calc(12px + 1.1vw);
-    border-bottom: 6px solid rgb(231, 255, 251);
-    text-align: center;
-    justify-content: center;
-    align-items: center;
-    height: 5ch;
-    position: sticky;
-    top: 0;
-    background-color: rgb(193, 216, 216);
-   }
+}
