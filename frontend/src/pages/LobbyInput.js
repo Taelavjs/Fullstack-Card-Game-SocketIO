@@ -88,35 +88,35 @@ const LobbyInput = ({setIsHost, setMatch, socket, setReadyStatus}) => {
 <div className="relative h-full w-full bg-gradient-to-r from-pastel-blue via-pastel-pink to-pastel-purple overflow-hidden flex flex-col justify-center items-center space-y-4">
     <div className="">
         <button
-            className="bg-pastel-pink text-white px-6 py-3 rounded-none hover:bg-pastel-pink-dark transition duration-300 shadow-lg transform hover:-translate-y-1 hover:scale-105"
+            className="bg-pastel-pink min-w-fit text-white px-6 py-3 rounded-none hover:bg-pastel-pink-dark transition duration-300 shadow-lg transform hover:-translate-y-1 hover:scale-105"
             onClick={showLobbys}
         >
             View Open Lobbies
         </button>
     </div>
-    <div className="w-full flex items-center justify-center">
+    <div className="w-full h-min flex flex-col items-center justify-evenly">
         <input
             type="text"
-            className="border border-gray-300 rounded-none px-4 py-3 bg-pastel-blue-light shadow-lg w-3/4"
+            className="border min-w-full border-gray-300 rounded-none px-4 py-3 bg-pastel-blue-light shadow-lg w-3/4"
             onChange={onChangeHandler}
             placeholder="Lobby Name"
         />
         <button
-            className="truncate bg-pastel-blue text-white px-6 py-3 ml-3 w-1/4 rounded-none hover:bg-pastel-blue-dark transition duration-300 shadow-lg transform hover:-translate-y-1 hover:scale-105"
+            className="truncate min-w-fit min-h-fit bg-pastel-blue text-white px-6 py-3 ml-3 w-1/4 rounded-none hover:bg-pastel-blue-dark transition duration-300 shadow-lg transform hover:-translate-y-1 hover:scale-105"
             onClick={createLobby}
         >
             Create
         </button>
     </div>
-    <div className="w-full flex items-center justify-center">
+    <div className="w-full h-min flex flex-col items-center justify-evenly">
         <input
             type="text"
-            className="border border-gray-300 rounded-none px-4 py-3 bg-pastel-pink-light shadow-lg w-3/4"
+            className="border min-w-full border-gray-300 rounded-none px-4 py-3 bg-pastel-pink-light shadow-lg w-3/4"
             onChange={onChangeHandler}
             placeholder="Lobby Code"
         />
         <button
-            className="truncate bg-pastel-purple w-1/4 text-white px-6 py-3 ml-3 rounded-none hover:bg-pastel-purple-dark transition duration-300 shadow-lg transform hover:-translate-y-1 hover:scale-105"
+            className="truncate min-w-fit min-h-fit bg-pastel-blue text-white px-6 py-3 ml-3 w-1/4 rounded-none hover:bg-pastel-blue-dark transition duration-300 shadow-lg transform hover:-translate-y-1 hover:scale-105"
             onClick={joinLobby}
         >
             Join {socket.connected ? '' : 'Disconnected'}
