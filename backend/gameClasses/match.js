@@ -136,14 +136,21 @@ class Match {
     noCardsRemainingCheck() {
         console.log("checking 1223 123");
         console.log(this.players.values());
+        let keysNoRemainingCards = [];
+
         for (const [key, value] of this.players.entries()) {
-            if (value.noCardsRemaining && value.selectedCard === null) return true;
+            console.log(keysNoRemainingCards)
+            console.log("@@@@@@@@@@");
+            if (value.noCardsRemaining && value.selectedCard === null) keysNoRemainingCards.push(key);
         }
-        return false;
+        return keysNoRemainingCards;
     }
 
     turns = () => {
-        if (this.noCardsRemainingCheck()) {
+        let playersWithNoCards = this.noCardsRemainingCheck();
+        console.log(playersWithNoCards);
+        console.log(playersWithNoCards.length, this.players.size);
+        if (playersWithNoCards.length == this.players.size - 1) {
             this.gameComplete();
             return;
         }
@@ -152,8 +159,10 @@ class Match {
         let promisesToRun = [];
 
         for (const [key, value] of this.players.entries()) {
-            if (value.selectedCard == null) {
+            console.log("key : ", key, "plers with no cards  :", playersWithNoCards, "is equal? ", value.selectedCard == null && !playersWithNoCards.includes(key));
+            if (value.selectedCard == null && !playersWithNoCards.includes(key)) {
                 promisesToRun.push(value.chosenCardListener());
+                console.log("listening for ", value.username);
             }
         }
 
@@ -163,6 +172,8 @@ class Match {
                 let highestCard = 0;
                 let highestCardPlayer = "";
                 for (const [key, value] of this.players.entries()) {
+
+                    if( playersWithNoCards.includes(key)) continue;
                     if (value.selectedCard == null) return;
                     cards.push(value.selectedCard);
                     console.log("cards : ", cards);
@@ -172,8 +183,14 @@ class Match {
                     }
                 }
                 for (const [key, value] of this.players.entries()) {
+                    console.log("this ran",  key);
+                    if(playersWithNoCards.includes(key)) continue;
                     console.log(key, value, highestCard);
                     value.removeCard();
+
+                    console.log(`${value.username} cards are : ${value.deck} and they chose ${value.selectedCard}`)
+                    console.log(value.deck);
+                    console.log(value.selectedCard);
                     if (key == highestCardPlayer) {
                         // WINNER PLAYER
                         console.log("cards to add : ", cards);
@@ -252,12 +269,15 @@ class Match {
     gameComplete() {
         this.winner = "host";
         for (const [key, value] of this.players.entries()) {
-            value.sendWinnerToPLayer(this.winner);
+            value.noCardsRemaining ? this.winner = this.winner : this.winner = value.username;
         }
+        console.log(this.winner, "has won");
+
         let roomStore = require('../utility/roomStore').removeActiveRoom(this.room);
         const sessionHandler = require("../gameClasses/handlers/setupSessionStore");
 
         for (const [key, value] of this.players.entries()) {
+            value.sendWinnerToPLayer(this.winner);
             sessionHandler.removePlayersActiveRoom(value.sessionID);
         }
 

@@ -79,9 +79,12 @@ class Player {
     checkCardExists(cardID) {
         if(this.selectedCard) { return this.selectedCard;}
         let cardsToCheckAgainst = this.getAccessiblePlayersCards()
+        console.log("checking in here ", cardsToCheckAgainst);
         for (let index = 0; index < cardsToCheckAgainst.length; index++) {
             const card = cardsToCheckAgainst[index];
-
+            console.log(card);
+            console.log("ABC");
+            console.log(cardID);
             if (card.id === parseInt(cardID)) {
                 this.selectedCard = card;
                 return card;
@@ -160,6 +163,12 @@ class Player {
     sendWinnerToPLayer(winner) {
         this.getSocket().emit("winner-decided", winner);
 
+    }
+
+    removeListeners(){
+        io.sockets.sockets.get(this.socketID).off("req-deck")
+        io.sockets.sockets.get(this.socketID).off("disconnect")
+        io.sockets.sockets.get(this.socketID).off("chosen-card")
     }
 
     

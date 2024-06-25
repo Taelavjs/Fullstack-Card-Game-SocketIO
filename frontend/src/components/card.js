@@ -2,20 +2,29 @@ import { useState } from 'react';
 import socket from '../socket';
 
 const Card = ({ cardValue, cardName, cardID, setSelectedCard, isSelected }) => {
+  const [flag, setFlag] = useState(false);
 
   const selectCard = () => {
-    socket.emit('chosen-card', cardID, cb => {
-      setSelectedCard(cardID); // Set isClicked to true when the card is clicked
-      console.log(cardID);
+    if (flag) {
+      console.log("Request already in progress, ignoring click.");
+      return;
+    }
 
-      if (!cb) {
-        setSelectedCard(null); // Set isClicked to true when the card is clicked
-        return;
+    setFlag(true);
+    console.log("Sending chosen-card event for cardID:", cardID);
+
+    socket.emit('chosen-card', cardID, (cb) => {
+      if (cb) {
+        setSelectedCard(cardID);
+        console.log("Card selection successful:", cardID);
+      } else {
+        setSelectedCard(null);
+        console.log("Card selection failed, resetting selected card.");
       }
+      setFlag(false);  // Reset flag only after server response
     });
   };
 
-  // Pastel colors inspired by the bisexual flag
   const pastelColors = {
     pink: '#FFB6C1',
     purple: '#9370DB',
