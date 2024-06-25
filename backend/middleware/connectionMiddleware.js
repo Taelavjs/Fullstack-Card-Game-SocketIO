@@ -16,9 +16,12 @@ module.exports = (sessionStore) => {
   io.use((socket, next) => {
 
     const sessionID = socket.handshake.auth.sessionID;
+    console.log("found session : ", sessionID);
+
     if (sessionID) {
       // find existing session
       const session = sessionStore.get(String(sessionID));
+      console.log("found session : ", session);
       if (session) {
         socket.sessionID = sessionID;
         socket.userID = session.userID;
@@ -35,6 +38,8 @@ module.exports = (sessionStore) => {
       }
     }
     const username = socket.handshake.auth.username;
+    console.log("username session : ", username);
+
     if (!username) {
       return next(new Error("invalid username"));
     }

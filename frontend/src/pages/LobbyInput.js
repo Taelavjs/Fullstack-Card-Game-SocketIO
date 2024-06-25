@@ -128,8 +128,13 @@ const LobbyInput = ({setIsHost, setMatch, socket, setReadyStatus}) => {
 
 
 
-        <div className={`fixed top-0 left-0 w-full h-screen overflow-y-auto ${showLobbyStatus ? 'slide-in' : 'slide-out'}`}>
-        <div className="flex flex-col justify-center items-center p-4 bg-gradient-to-b from-pink-500 via-purple-500 to-blue-500">
+        <div className={`fixed top-0 left-0 right-0 mr-auto ml-auto self-center w-4/6 ${showLobbyStatus ? 'slide-in' : 'slide-out'}`}>
+        <div className="w-full ">
+        <div className="gridList">
+          <div className="cellList heading">Lobby Name</div>
+          <div className="cellList heading">Host Name</div>
+          <div className="cellList heading">Player Count</div>
+
         {listLobbys?.map((lobbyInfo, index) => (
             <LobbySelector
             key={index}
@@ -137,6 +142,7 @@ const LobbyInput = ({setIsHost, setMatch, socket, setReadyStatus}) => {
             setRoomName={() => joinLobbys(lobbyInfo.roomTitle)}
             />
         ))}
+        </div>
         </div>
     </div>
     </>)
