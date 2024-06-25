@@ -19,6 +19,7 @@ const LobbyInput = ({setIsHost, setMatch, socket, setReadyStatus}) => {
     
     const joinLobbys = (roomName) => {
         setShowLobbyStatus(false);
+        console.log("attempt");
         socket.emit("join-room", roomName, (values) => {
           console.log(roomName, values);
           console.log("JOINGED ROOM RETURNED : ", values);
@@ -135,7 +136,7 @@ const LobbyInput = ({setIsHost, setMatch, socket, setReadyStatus}) => {
 
 
         <div className={`fixed top-0 left-0 mr-auto ml-auto self-center w-4/6 ${showLobbyStatus ? 'slide-in' : 'slide-out'}`}>
-        <div className="w-screen h-screen" onClick={showLobbys}>
+        <div className="w-screen h-screen zBackClick" onClick={showLobbys}>
         <div className="gridList">
           <div className="cellList heading">Lobby Name</div>
           <div className="cellList heading">Host Name</div>

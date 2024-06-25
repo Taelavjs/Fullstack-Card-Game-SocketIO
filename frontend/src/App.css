@@ -29,6 +29,7 @@
   height: min-content;
   max-height: 50vh;
   overflow-y: auto;
+  z-index: -11;
 
   /* Remove custom scrollbar styles and utilize Tailwind utilities for future customization */
   /* scrollbar-color: red orange; */
@@ -43,7 +44,7 @@
   text-align: center;
   align-items: center;
   gap: 0;
-  z-index: -1;
+  z-index: 6;
   backdrop-filter: blur(3px);
 }
 
@@ -51,7 +52,7 @@
   font-size: calc(1.2rem + 1.1vw); /* Use rem for better responsiveness */
   border-bottom: 6px solid rgb(231, 255, 251);
   display: flex;
-  z-index: 0;
+  z-index: 7;
 justify-content: center;
 align-items: center;
   text-align: center;
@@ -61,6 +62,10 @@ align-items: center;
   position: sticky;
   top: 0;
   background-color: rgb(193, 216, 216);
+}
+
+.zBackClick {
+    z-index: -2;
 }
 
 @media (max-width: 750px) {

@@ -1,7 +1,6 @@
 import './../App.css';
 
 const LobbySelector = ({ roomInfo, setRoomName }) => {
-  console.log(roomInfo);
   const { numPlayers, maxNumPlayers, hostName, roomTitle } = roomInfo;
 
   return (
