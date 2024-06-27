@@ -42,8 +42,14 @@ const Matchmaking = () => {
       } // Delay in milliseconds
     });
 
+    socket.on("room-shutdown", () => {
+      console.log("room closed cause host left");
+      window.location.reload();
+    })
 
     return () => {
+      socket.off("room-shutdown");
+
       socket.off("game-start");
       socket.off("winner-decided");
     }

@@ -1,3 +1,5 @@
+const Session =require("../gameClasses/Session");
+
 const onConnection = (sessionStore, socket) => {
   console.log("returned false lmao");
 
@@ -8,13 +10,7 @@ const onConnection = (sessionStore, socket) => {
     return true;
   }
   sessionStore.set(
-    socket.handshake.auth.sessionID.toString(), {
-    'userID': socket.userID,
-    'username': socket.username,
-    'socketId': socket.id,
-    'activeRoom': null,
-  }
-  );
+    socket.handshake.auth.sessionID.toString(), new Session(socket.userID, socket.username, socket.id, null));
   console.log("test test test");
   return false;
 }

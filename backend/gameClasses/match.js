@@ -36,6 +36,22 @@ class Match {
 
     }
 
+    removePlayer(sessionID) {
+        const leftUsn = this.players.get(sessionID).username;
+        this.players.delete(sessionID);
+        console.log("delete", sessionID);
+
+        if (sessionID === this.host.sessionID) {
+            // Host is leaving, shut down the room
+            this.roomShutDown();
+            return true;
+        } else {
+            // Notify remaining players that a player has left
+            this.playerLeft(leftUsn);
+            return false;
+        }
+    }
+
     updateSettings(socket) {
         this.settingsSocket = socket;
         console.log(socket.handshake.auth.sessionID, this.host.sessionID);
@@ -85,8 +101,21 @@ class Match {
     newPlayerJoined(newPlayer) {
         this.players.set(newPlayer.sessionID, newPlayer);
         this.emitMatchSettings();
+        return this.emitPlayersInRoom();
+    }
 
-        console.log("emitted settings");
+    emitPlayersInRoom(){
+        let io = require('../socket').getio();
+
+        let playerUsernames = [];
+        this.players.forEach((value, key) => {
+            playerUsernames.push(value.username);
+            value.resetReadyStatus();
+            })
+            
+        console.log("PLayer names : ", playerUsernames);
+        io.in(this.room).emit("player-joined", playerUsernames );
+        return playerUsernames;
     }
 
     isAllReady() {
@@ -127,7 +156,7 @@ class Match {
 
     handOutDecks() {
         for (const [key, player] of this.players.entries()) {
-            player.gameStart();
+            player.sendDeck();
         }
         this.timerStart(20);
         this.turns();
@@ -197,6 +226,7 @@ class Match {
                         value.addCardToDeck([...cards]);
                     }
                     value.resetChosenCard();
+                    value.sendDeck;
                 }
                 console.log(cards);
                 this.recordRound(...cards);
@@ -278,11 +308,41 @@ class Match {
 
         for (const [key, value] of this.players.entries()) {
             value.sendWinnerToPLayer(this.winner);
+            value.removeListeners();
             sessionHandler.removePlayersActiveRoom(value.sessionID);
         }
 
         this.io.in(this.room).socketsLeave(this.room);
         console.log("Room ", this.room, " Shut ON Socket IO side");
+    }
+
+    roomShutDown() {
+
+        console.log("room is shutting down");
+        let io = require('../socket').getio();
+        io.in(this.room).emit("room-shutdown");
+
+
+        io.in(this.room).socketsLeave(this.room);
+
+        // Perform additional cleanup if needed
+        require('../utility/roomStore.js').removeActiveRoom(this.room);
+        const sessionHolder = require('../gameClasses/handlers/setupSessionStore.js');
+
+        for (const [key, value] of this.players.entries()) {
+            value.removeListeners();
+            sessionHolder.removePlayersActiveRoom(value.sessionID);
+        }
+
+        this.players.clear();
+    }
+    
+
+    playerLeft(playerUsername){
+        let io = require('../socket').getio();
+
+        io.in(this.room).emit("player-left", playerUsername);
+        this.emitPlayersInRoom();
     }
 }
 function resolveAfter1Second() {

@@ -14,11 +14,6 @@ const UsernameComponent = ({ sessionId, setSessionId, userID, setUserID }) => {
 
     useEffect(() => {
 
-
-
-
-
-
     }, []);
 
     return (

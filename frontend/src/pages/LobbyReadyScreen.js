@@ -8,11 +8,13 @@ const LobbyReadyScreen = ({ match, socket, readyStatus, setReadyStatus }) => {
             if(cb) setReadyStatus(true);
             if(!cb) console.log("error");
         });
+
+        
     }
 
     useEffect(() => {
 
-    })
+    }, [])
 
     return (
         <>

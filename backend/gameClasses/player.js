@@ -1,3 +1,13 @@
+class TimeToDisconnect {
+    constructor(timeToDisconnect) {
+        this.timeToDisconnect = timeToDisconnect;
+    }
+
+    startCountdown() { 
+
+    }
+}
+
 class Player {
     /**
      * 
@@ -13,6 +23,7 @@ class Player {
         this.selectedCard = null;
         this.noCardsRemaining = false;
         this.sessionID = sessionID
+        this.timeToDisconnect
     }
 
     matchStart() {
@@ -31,12 +42,7 @@ class Player {
         return io.to(this.socketID);
     }
 
-    /**
-     * Sends out the deck to
-     */
-    gameStart = () => {
-        this.sendDeck();
-    }
+    
 
     /**
      * Triggered every turn of the player
@@ -112,7 +118,6 @@ class Player {
 
     resetChosenCard() {
         this.selectedCard = null;
-        this.sendDeck();
     }
 
     sendDeck() {
@@ -166,9 +171,13 @@ class Player {
     }
 
     removeListeners(){
-        io.sockets.sockets.get(this.socketID).off("req-deck")
-        io.sockets.sockets.get(this.socketID).off("disconnect")
-        io.sockets.sockets.get(this.socketID).off("chosen-card")
+        let io = require('../socket').getio();
+        console.log(this.socketID);
+        console.log(io.sockets.sockets.get(this.socketID).socket);
+        io.sockets.sockets.get(this.socketID).removeAllListeners("req-deck")
+        io.sockets.sockets.get(this.socketID).removeAllListeners("disconnect")
+        io.sockets.sockets.get(this.socketID).removeAllListeners("chosen-card")
+        io.sockets.sockets.get(this.socketID).removeAllListeners("ready")
     }
 
     

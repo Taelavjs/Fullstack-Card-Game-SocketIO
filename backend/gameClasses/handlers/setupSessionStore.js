@@ -1,22 +1,12 @@
 const { session } = require("../../listeners/session");
-
+const Session =require("../Session");
 let sessionStore;
 
 module.exports = {
     init: function () {
         sessionStore = new Map();
-        sessionStore.set('1111', {
-            'userID': parseInt('0000'),
-            'username': 'dave',
-            'socketId': null,
-            'activeRoom': null,
-        });
-        sessionStore.set('2222', {
-            'userID': parseInt('9999'),
-            'username': 'barnie',
-            'socketId': null,
-            'activeRoom': null,
-        });
+        sessionStore.set('1111',new Session(parseInt('0000'), 'dave', null, null));
+
         return sessionStore;
     },
     getSessionStore: function () {
@@ -36,6 +26,7 @@ module.exports = {
     },
 
     removePlayersActiveRoom: (sessionID) => {
+        console.log("removal van");
         console.log(sessionID);
         sessionStore.get(sessionID).activeRoom = null;
     },

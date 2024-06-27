@@ -80,6 +80,7 @@ const LobbyInput = ({setIsHost, setMatch, socket, setReadyStatus}) => {
           setMatch(cb);
     
           socket.on("player-joined", (players) => {
+            console.log("Player-joined registered");
             setMatch(players);
             setReadyStatus(false);
             console.log("PLAYERS IN ROOM ", players);

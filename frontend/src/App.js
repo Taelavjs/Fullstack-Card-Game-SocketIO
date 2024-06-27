@@ -79,7 +79,7 @@ function App() {
       socket.off('session');
       socket.off("connection-error");
     };
-  }, []);
+  }, [sessionID]);
 
   return (
     <>
