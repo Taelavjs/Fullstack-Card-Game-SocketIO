@@ -13,6 +13,7 @@ const GameScreen = ({ setGameStart, socket }) => {
     });
 
     const handleDeckUpdate = (deck) => {
+      console.log("DECK RECEIVED");
       console.log("Deck updated:", deck);
       setSelectedCard(null);
       setDeck(deck);

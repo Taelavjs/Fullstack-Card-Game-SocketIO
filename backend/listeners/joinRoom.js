@@ -9,8 +9,6 @@ const joinRoom = (io, socket) => {
     socket.on("join-room", (room, cb) => {
         console.log("attempted join");
         const match = getActiveRoom(room);
-        console.log(match.canPlayerJoin());
-        console.log(match);
         if (match == undefined || !match.canPlayerJoin()) {
             console.log(match.canPlayerJoin());
             console.log(match);

@@ -39,26 +39,27 @@ class Match {
     removePlayer(sessionID) {
         const leftUsn = this.players.get(sessionID).username;
         this.players.delete(sessionID);
-        console.log("delete", sessionID);
 
-        if (sessionID === this.host.sessionID) {
+        if (sessionID === this.host.sessionID && this.status != "PLAYING") {
+            for(const [key, value] in this.players){
+                value.removeListeners();
+            }
             // Host is leaving, shut down the room
             this.roomShutDown();
             return true;
         } else {
             // Notify remaining players that a player has left
             this.playerLeft(leftUsn);
+            if(this.state == "PLAYING") this.turns();
             return false;
         }
     }
 
     updateSettings(socket) {
         this.settingsSocket = socket;
-        console.log(socket.handshake.auth.sessionID, this.host.sessionID);
         if (parseInt(socket.handshake.auth.sessionID) !== parseInt(this.host.sessionID)) return;
     
         socket.on("match-settings", ({ maxPlayers, minPlayers }, cb) => {
-            console.log(maxPlayers, minPlayers);
             if (!(maxPlayers <= 15 && minPlayers <= 15 && 
                 maxPlayers >= 2 && minPlayers >= 2 && 
                 maxPlayers >= minPlayers && 
@@ -81,12 +82,10 @@ class Match {
     }
 
     checkMinNumToStart () {
-        console.log()
         return this.minNumPlayers > this.players.size;
     }
 
     emitMatchSettings(){
-        console.log("EMIT SETTINGS BRO");
 
         let io = require('../socket').getio();
 
@@ -119,11 +118,7 @@ class Match {
     }
 
     isAllReady() {
-        console.log("this.players:", this.players);
-
         for (const [key, value] of this.players.entries()) {
-            console.log("KEY FOR FOR EACH", key);
-            console.log(value)
             if (value.getReadyStatus()) continue;
             return false;
         }
@@ -163,35 +158,28 @@ class Match {
     }
 
     noCardsRemainingCheck() {
-        console.log("checking 1223 123");
-        console.log(this.players.values());
         let keysNoRemainingCards = [];
 
         for (const [key, value] of this.players.entries()) {
-            console.log(keysNoRemainingCards)
-            console.log("@@@@@@@@@@");
             if (value.noCardsRemaining && value.selectedCard === null) keysNoRemainingCards.push(key);
         }
         return keysNoRemainingCards;
     }
 
     turns = () => {
+
         let playersWithNoCards = this.noCardsRemainingCheck();
         console.log(playersWithNoCards);
-        console.log(playersWithNoCards.length, this.players.size);
         if (playersWithNoCards.length == this.players.size - 1) {
             this.gameComplete();
             return;
         }
         this.timerRestart(20);
-        console.log("TIMER STARTED AT 20");
         let promisesToRun = [];
 
         for (const [key, value] of this.players.entries()) {
-            console.log("key : ", key, "plers with no cards  :", playersWithNoCards, "is equal? ", value.selectedCard == null && !playersWithNoCards.includes(key));
             if (value.selectedCard == null && !playersWithNoCards.includes(key)) {
                 promisesToRun.push(value.chosenCardListener());
-                console.log("listening for ", value.username);
             }
         }
 
@@ -205,34 +193,24 @@ class Match {
                     if( playersWithNoCards.includes(key)) continue;
                     if (value.selectedCard == null) return;
                     cards.push(value.selectedCard);
-                    console.log("cards : ", cards);
                     if (parseInt(value.selectedCard.value) > highestCard) {
                         highestCard = value.selectedCard.value;
                         highestCardPlayer = key;
                     }
                 }
                 for (const [key, value] of this.players.entries()) {
-                    console.log("this ran",  key);
                     if(playersWithNoCards.includes(key)) continue;
-                    console.log(key, value, highestCard);
                     value.removeCard();
 
-                    console.log(`${value.username} cards are : ${value.deck} and they chose ${value.selectedCard}`)
-                    console.log(value.deck);
-                    console.log(value.selectedCard);
                     if (key == highestCardPlayer) {
                         // WINNER PLAYER
-                        console.log("cards to add : ", cards);
                         value.addCardToDeck([...cards]);
                     }
                     value.resetChosenCard();
-                    value.sendDeck;
+                    value.sendDeck();
                 }
-                console.log(cards);
                 this.recordRound(...cards);
-                console.log(this.historyRound);
                 this.turns();
-
             })
             .catch(error => {
                 // Runs repeatedly if user disconnects prior to receiving a request
@@ -299,9 +277,9 @@ class Match {
     gameComplete() {
         this.winner = "host";
         for (const [key, value] of this.players.entries()) {
+            value.removeListeners();
             value.noCardsRemaining ? this.winner = this.winner : this.winner = value.username;
         }
-        console.log(this.winner, "has won");
 
         let roomStore = require('../utility/roomStore').removeActiveRoom(this.room);
         const sessionHandler = require("../gameClasses/handlers/setupSessionStore");
@@ -313,12 +291,10 @@ class Match {
         }
 
         this.io.in(this.room).socketsLeave(this.room);
-        console.log("Room ", this.room, " Shut ON Socket IO side");
     }
 
     roomShutDown() {
 
-        console.log("room is shutting down");
         let io = require('../socket').getio();
         io.in(this.room).emit("room-shutdown");
 
@@ -343,6 +319,7 @@ class Match {
 
         io.in(this.room).emit("player-left", playerUsername);
         this.emitPlayersInRoom();
+        
     }
 }
 function resolveAfter1Second() {

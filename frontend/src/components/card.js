@@ -14,6 +14,7 @@ const Card = ({ cardValue, cardName, cardID, setSelectedCard, isSelected }) => {
     console.log("Sending chosen-card event for cardID:", cardID);
 
     socket.emit('chosen-card', cardID, (cb) => {
+      console.log("Callback : ", cb);
       if (cb) {
         setSelectedCard(cardID);
         console.log("Card selection successful:", cardID);
