@@ -53,6 +53,7 @@ class Player {
      */
     async chosenCardListener() {
         return new Promise((resolve, reject) => {
+            console.log("this was triggered");
             if (this.selectedCard !== null) {
                 resolve(this.selectedCard);
                 return;
@@ -101,6 +102,8 @@ class Player {
 
     requestDeck(){
         let io = require('../socket').getio();
+        if(io.sockets.sockets.get(this.socketID) == undefined ) return;
+
         io.sockets.sockets.get(this.socketID).once("req-deck", (arg, ack) => {
             ack(this.getAccessiblePlayersCards());
         })
@@ -173,7 +176,7 @@ class Player {
     removeListeners(){
         let io = require('../socket').getio();
         console.log(this.socketID);
-        console.log(io.sockets.sockets.get(this.socketID).socket);
+        if(io.sockets.sockets.get(this.socketID) == undefined ) return;
         io.sockets.sockets.get(this.socketID).removeAllListeners("req-deck")
         io.sockets.sockets.get(this.socketID).removeAllListeners("disconnect")
         io.sockets.sockets.get(this.socketID).removeAllListeners("chosen-card")

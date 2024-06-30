@@ -1,8 +1,3 @@
-const discTimer = (callback) => {
-
-}
-
-
 class Session {
     /**
      * 
@@ -17,6 +12,7 @@ class Session {
         this.socketID = socketID;
         this.activeRoom = null;
         this.timeoutFn = null;
+        this.secondsToTimeout = 15;
         
     }
 
@@ -37,6 +33,7 @@ class Session {
             console.log("Disconnected FRFR");
             // Get game player is in, remove the game from lobby holder
             let playerGame = require('../utility/roomStore.js').getActiveRoom(activeRoom);
+            if(playerGame == undefined) return;
             sessionHolder.removePlayersActiveRoom(sessionID);
 
             if(playerGame.removePlayer(sessionID)) {
@@ -44,7 +41,7 @@ class Session {
                 discSession = seshStore.get(sessionID);
             }
 
-        }, 1000);
+        }, this.secondsToTimeout * 1000);
     }
 }
 
