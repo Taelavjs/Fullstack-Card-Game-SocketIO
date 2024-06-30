@@ -6,10 +6,7 @@ module.exports = {
     init: function(server) {
         return new Promise((resolve) => {
             const httpServer = require("http").createServer();
-            io = require("socket.io")(httpServer, {
-            cors: {
-                origin: ["http://localhost:8080", "https://admin.socket.io"],
-            }});
+            io = require("socket.io")(httpServer);
             instrument(io, {
                 auth: false,
                 mode: "development",
